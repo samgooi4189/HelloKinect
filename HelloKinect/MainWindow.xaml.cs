@@ -43,7 +43,8 @@ namespace HelloKinect
         //Voice control
         VoiceCommander v_commander;
         RecordingStatus status = RecordingStatus.STOP;
-
+        //file stream for gesture
+        GestureIO fileManager;
 
         public MainWindow()
         {
@@ -153,13 +154,16 @@ namespace HelloKinect
 
             skeletonDisplayManager = new SkeletonDisplayManager(kinectSensor, kinectCanvas);
             //Add keywords that you wan to detect
-            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "stahpit");
+            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "stahpit", "write");
 
             kinectSensor.Start();
             kinectDisplay.DataContext = colorManager;
 
             v_commander.OrderDetected += voiceCommander_OrderDetected;
             StartVoiceCommander();
+
+            fileManager = new GestureIO();
+            fileManager.loadGesture();
         }
 
         public void Clean() {
@@ -384,6 +388,10 @@ namespace HelloKinect
 
         void OnTestGesture() {
             status = RecordingStatus.USE;
+        }
+
+        void OnWriteGesture() {
+            fileManager.saveGesture("gesture1", gesture1_right, gesture1_left);
         }
 
         enum RecordingStatus { 

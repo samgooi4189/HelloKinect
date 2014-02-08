@@ -45,6 +45,10 @@ namespace HelloKinect
                         Console.WriteLine("Talk start");
                         OnTestGesture();
                         break;
+                    case "write":
+                        Console.WriteLine("Talk write");
+                        OnWriteGesture();
+                        break;
                 }
             }));
         }
