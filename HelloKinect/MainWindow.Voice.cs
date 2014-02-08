@@ -25,15 +25,25 @@ namespace HelloKinect
                 {
                     case "record":
                         Console.WriteLine("Talk record");
+                        OnStartRecord();
                         break;
                     case "stop":
                         Console.WriteLine("Talk stop");
+                        OnStopRecord();
+                        break;
+                    case "stahpit":
+                        Console.WriteLine("Talk stahp");
+                        OnStopRecord();
                         break;
                     case "fly away":
                         Console.WriteLine("Talk fly away");
                         break;
                     case "flapping":
                         Console.WriteLine("Talk flapping");
+                        break;
+                    case "start":
+                        Console.WriteLine("Talk start");
+                        OnTestGesture();
                         break;
                 }
             }));

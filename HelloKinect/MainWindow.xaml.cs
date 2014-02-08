@@ -38,8 +38,12 @@ namespace HelloKinect
         //linked list for right and left hand
         LinkedList<double> rightList = new LinkedList<double>();
         LinkedList<double> leftList = new LinkedList<double>();
+        LinkedList<double> gesture1_right = new LinkedList<double>();
+        LinkedList<double> gesture1_left = new LinkedList<double>();
         //Voice control
         VoiceCommander v_commander;
+        RecordingStatus status = RecordingStatus.STOP;
+
 
         public MainWindow()
         {
@@ -121,11 +125,7 @@ namespace HelloKinect
          */
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            kinectSensor.DepthFrameReady -= kinectSensor_DepthFrameReady;
-            kinectSensor.SkeletonFrameReady -= kinectRuntime_SkeletonFrameReady;
-            kinectSensor.ColorFrameReady -= kinectRuntime_ColorFrameReady;
-            kinectSensor.Stop();
-            kinectSensor = null;
+            Clean();
         }
 
         /*
@@ -153,7 +153,7 @@ namespace HelloKinect
 
             skeletonDisplayManager = new SkeletonDisplayManager(kinectSensor, kinectCanvas);
             //Add keywords that you wan to detect
-            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping");
+            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "stahpit");
 
             kinectSensor.Start();
             kinectDisplay.DataContext = colorManager;
@@ -231,7 +231,8 @@ namespace HelloKinect
                 if (skeleton.TrackingState != SkeletonTrackingState.Tracked)
                     continue;
 
-                if (!timerWait.IsRunning && (timerRec.Elapsed.Seconds > 1 || !timerRec.IsRunning))
+                //timer for recording and wait
+                if (!timerWait.IsRunning && (timerRec.Elapsed.Seconds > 2 || !timerRec.IsRunning))
                 {
                     timerRec.Stop();
                     timerRec.Reset();
@@ -240,45 +241,69 @@ namespace HelloKinect
                     timerWait.Reset();
                     timerWait.Start();
                 }
-
                 if (timerWait.Elapsed.Seconds >= 5 && !timerRec.IsRunning)
                 {
                     Console.WriteLine("This is 5 sec, RECORD!");
                     timerWait.Stop();
                     timerRec.Start();
                 }
-                //if (eyeTracker == null)
-                //    eyeTracker = new EyeTracker(kinectSensor);
-
-                //eyeTracker.Track(skeleton);
 
                 /*contextTracker.Add(skeleton.Position.ToVector3(), skeleton.TrackingId);
                 stabilities.Add(skeleton.TrackingId, contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId) ? "Stable" : "Non stable");
                 if (!contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId))
                     continue;
                 */
-                //if (eyeTracker.IsLookingToSensor.HasValue && eyeTracker.IsLookingToSensor == false)
-                //    continue;
                 //StringBuilder strBuilder = new StringBuilder();
 
                 foreach (Joint joint in skeleton.Joints)
                 {
+                    if (status == RecordingStatus.STOP)
+                        break;
+
                     if (!timerRec.IsRunning) {
                         continue;
                     }
+
                     if (joint.TrackingState != JointTrackingState.Tracked)
                         continue;
                     //strBuilder.Append(joint.JointType.ToString());
 
-                    if (joint.JointType.Equals(JointType.HandRight))
+                    if (status == RecordingStatus.RECORD)
                     {
-                        Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                        rightList.AddLast(joint.Position.Y);
+                        if (joint.JointType.Equals(JointType.HandRight))
+                        {
+                            Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
+                            rightList.AddLast(joint.Position.Y);
+                        }
+                        else if (joint.JointType.Equals(JointType.HandLeft))
+                        {
+                            Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
+                            leftList.AddLast(joint.Position.Y);
+                        }
                     }
-                    if (joint.JointType.Equals(JointType.HandLeft))
-                    {
-                        Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                        leftList.AddLast(joint.Position.Y);
+                    else if (status == RecordingStatus.USE) {
+                        double cur_pos = joint.Position.Y;
+                        bool touched = false;
+                        if (joint.JointType.Equals(JointType.HandRight)) {
+                            Console.WriteLine(String.Format("Using right: {0}", cur_pos));
+                            //assume gesture array have only 6 elements
+                            foreach (double coor in gesture1_right)
+                            {
+                                touched |= IsWithinRange(cur_pos, coor);
+                            }
+                            if(touched)
+                                Console.WriteLine("right detected");
+                        }
+                        else if (joint.JointType.Equals(JointType.HandLeft)) {
+                            Console.WriteLine(String.Format("Using left: {0}", cur_pos));
+                            //assume gesture array have only 6 elements
+                            foreach (double coor in gesture1_left)
+                            {
+                                touched |= IsWithinRange(cur_pos, coor);
+                            }
+                            if(touched)
+                                Console.WriteLine("left detected");
+                        }
                     }
                 }
 
@@ -297,9 +322,23 @@ namespace HelloKinect
             if (rightList.Count == 0 || leftList.Count == 0) {
                 return;
             }
+            //insert into result array
+            /*double rightSUM =0, leftSUM=0;
+            foreach (double r_val in rightList)
+                rightSUM += r_val;
+            rightSUM /= rightList.Count;
+            foreach (double l_val in leftList)
+                leftSUM += l_val;
+            leftSUM /= leftList.Count;
+            gesture1_right.AddLast(rightSUM);
+            gesture1_left.AddLast(leftSUM);*/
+            gesture1_right.AddLast(rightList.Last());
+            gesture1_left.AddLast(leftList.Last());
 
             double rightDiff = Math.Abs(rightList.Last() - rightList.First());
             double leftDiff = Math.Abs(leftList.Last() - leftList.First());
+            rightList.Clear();
+            leftList.Clear();
 
             Console.WriteLine(String.Format("Right Diff: {0}, Left Diff: {1} ", rightDiff, leftDiff));
         }
@@ -323,6 +362,32 @@ namespace HelloKinect
         void replay_SkeletonFrameReady(object sender, ReplaySkeletonFrameReadyEventArgs e)
         {
             ProcessFrame(e.SkeletonFrame);
+        }
+
+        bool IsWithinRange(double cur, double stored) {
+            if (cur < stored + 0.05 && cur > stored - 0.05) {
+                return true;
+            }
+            return false;
+        }
+
+        //Voice trigger events
+        void OnStartRecord() {
+            status = RecordingStatus.RECORD;
+            gesture1_left.Clear();
+            gesture1_right.Clear();
+        }
+
+        void OnStopRecord() {
+            status = RecordingStatus.STOP;
+        }
+
+        void OnTestGesture() {
+            status = RecordingStatus.USE;
+        }
+
+        enum RecordingStatus { 
+           RECORD, STOP, USE 
         }
     }
 }
