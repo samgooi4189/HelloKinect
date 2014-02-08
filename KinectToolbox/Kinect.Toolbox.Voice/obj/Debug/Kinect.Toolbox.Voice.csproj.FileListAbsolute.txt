@@ -1,0 +1,5 @@
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\Kinect.Toolbox.Voice\bin\Debug\Kinect.Toolbox.Voice.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\Kinect.Toolbox.Voice\bin\Debug\Kinect.Toolbox.Voice.pdb
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\Kinect.Toolbox.Voice\obj\Debug\Kinect.Toolbox.Voice.csprojResolveAssemblyReference.cache
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\Kinect.Toolbox.Voice\obj\Debug\Kinect.Toolbox.Voice.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\Kinect.Toolbox.Voice\obj\Debug\Kinect.Toolbox.Voice.pdb

@@ -1,0 +1,12 @@
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\bin\Debug\Kinect.Toolbox.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\bin\Debug\Kinect.Toolbox.pdb
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\bin\Debug\Microsoft.Kinect.Toolkit.FaceTracking.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Kinect.Toolbox.csprojResolveAssemblyReference.cache
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Controls\PresenceControl.baml
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Controls\MouseImpostor.baml
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Controls\PresenceControl.g.cs
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Controls\MouseImpostor.g.cs
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Kinect.Toolbox_MarkupCompile.cache
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Kinect.Toolbox.g.resources
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Kinect.Toolbox.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\obj\Debug\Kinect.Toolbox.pdb
