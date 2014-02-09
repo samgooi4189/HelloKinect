@@ -375,6 +375,10 @@ namespace HelloKinect
             return false;
         }
 
+        void ButtonOnClick(Object sender, RoutedEventArgs e) {
+            MessageBox.Show("Button Clicked");
+        }
+
         //Voice trigger events
         void OnStartRecord() {
             status = RecordingStatus.RECORD;

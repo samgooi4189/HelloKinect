@@ -28,8 +28,9 @@ namespace HelloKinect
                     String input= "";
                     while ((input = reader.ReadLine()) != null) {
                         content.AddLast(input);
+                        Console.WriteLine(input);
                     }
-                    Console.WriteLine(content.ToString());
+                    reader.Close();
                 }
                 return true;   
             }
@@ -45,11 +46,14 @@ namespace HelloKinect
                 }
 
                 String txt_path = String.Format("{0}/gestures.kges", dir_path);
-                if (!File.Exists(txt_path)) { 
+                if (!File.Exists(txt_path))
+                {
                     //create a file to write to
-                    using (StreamWriter streamWriter = File.CreateText(txt_path)) {
+                    using (StreamWriter streamWriter = File.CreateText(txt_path))
+                    {
                         streamWriter.WriteLine(gesture_name);
-                        foreach (double r in right_coordinates) { 
+                        foreach (double r in right_coordinates)
+                        {
                             streamWriter.Write("{0}, ", r.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
@@ -59,6 +63,24 @@ namespace HelloKinect
                         }
                         streamWriter.Write(System.Environment.NewLine);
                         streamWriter.Write(System.Environment.NewLine);
+                        streamWriter.Close();
+                    }
+                }
+                else {
+                    using (StreamWriter streamWriter = File.AppendText(txt_path)) {
+                        streamWriter.WriteLine(gesture_name);
+                        foreach (double r in right_coordinates)
+                        {
+                            streamWriter.Write("{0}, ", r.ToString());
+                        }
+                        streamWriter.Write(System.Environment.NewLine);
+                        foreach (double l in left_coordinates)
+                        {
+                            streamWriter.Write("{0}, ", l.ToString());
+                        }
+                        streamWriter.Write(System.Environment.NewLine);
+                        streamWriter.Write(System.Environment.NewLine);
+                        streamWriter.Close();
                     }
                 }
                 //read file
@@ -67,6 +89,7 @@ namespace HelloKinect
                     while ((str = reader.ReadLine()) != null) {
                         Console.WriteLine(str);
                     }
+                    reader.Close();
                 }
 
                 return true;
