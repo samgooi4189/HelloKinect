@@ -38,9 +38,6 @@
     <Reference Include="Microsoft.Kinect.Toolkit">
       <HintPath>C:\Program Files\Microsoft SDKs\Kinect\Developer Toolkit v1.8.0\Assemblies\Microsoft.Kinect.Toolkit.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Kinect.Toolkit.Controls">
-      <HintPath>C:\Program Files\Microsoft SDKs\Kinect\Developer Toolkit v1.8.0\Assemblies\Microsoft.Kinect.Toolkit.Controls.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Kinect.Toolkit.Interaction">
       <HintPath>C:\Program Files\Microsoft SDKs\Kinect\Developer Toolkit v1.8.0\Assemblies\Microsoft.Kinect.Toolkit.Interaction.dll</HintPath>
     </Reference>
@@ -71,6 +68,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AppOutput.cs" />
     <Compile Include="GestureIO.cs" />
     <Compile Include="MainWindow.Voice.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -113,6 +111,10 @@
     <ProjectReference Include="..\KinectToolbox\Kinect.Toolbox.Voice\Kinect.Toolbox.Voice.csproj">
       <Project>{09dae56b-715f-4069-bb66-a110d876a772}</Project>
       <Name>Kinect.Toolbox.Voice</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Microsoft.Kinect.Toolkit.Controls\Microsoft.Kinect.Toolkit.Controls.csproj">
+      <Project>{4508c4d1-85bb-4f3f-9e3b-cc93d231c65d}</Project>
+      <Name>Microsoft.Kinect.Toolkit.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

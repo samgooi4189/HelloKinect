@@ -31,8 +31,8 @@ namespace HelloKinect
                         Console.WriteLine("Talk stop");
                         OnStopRecord();
                         break;
-                    case "stahpit":
-                        Console.WriteLine("Talk stahp");
+                    case "finish":
+                        Console.WriteLine("Talk finish");
                         OnStopRecord();
                         break;
                     case "fly away":

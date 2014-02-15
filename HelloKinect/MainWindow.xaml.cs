@@ -18,6 +18,8 @@ using Kinect.Toolbox.Voice;
 using Microsoft.Kinect;
 using Kinect.Toolbox.Record;
 using System.Timers;
+using Microsoft.Kinect.Toolkit;
+using Microsoft.Kinect.Toolkit.Controls;
 
 namespace HelloKinect
 {
@@ -27,6 +29,7 @@ namespace HelloKinect
     public partial class MainWindow : Window
     {
         public KinectSensor kinectSensor;
+        private KinectSensorChooser sensorChooser;
         SkeletonDisplayManager skeletonDisplayManager;
         readonly ColorStreamManager colorManager = new ColorStreamManager();
         readonly DepthStreamManager depthManager = new DepthStreamManager();
@@ -94,6 +97,10 @@ namespace HelloKinect
          */
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.sensorChooser = new KinectSensorChooser();
+            this.sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
+            this.sensorChooserUi.KinectSensorChooser = this.sensorChooser;
+            this.sensorChooser.Start();
 
             try
             {
@@ -154,10 +161,10 @@ namespace HelloKinect
 
             skeletonDisplayManager = new SkeletonDisplayManager(kinectSensor, kinectCanvas);
             //Add keywords that you wan to detect
-            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "stahpit", "write");
+            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "finish", "write");
 
             kinectSensor.Start();
-            kinectDisplay.DataContext = colorManager;
+            //kinectDisplay.DataContext = colorManager;
 
             v_commander.OrderDetected += voiceCommander_OrderDetected;
             StartVoiceCommander();
@@ -241,6 +248,7 @@ namespace HelloKinect
                     timerRec.Stop();
                     timerRec.Reset();
                     Console.WriteLine("Start to wait........");
+                    Output.Text = ("Start to wait............");
                     ProcessGesture();
                     timerWait.Reset();
                     timerWait.Start();
@@ -248,6 +256,7 @@ namespace HelloKinect
                 if (timerWait.Elapsed.Seconds >= 5 && !timerRec.IsRunning)
                 {
                     Console.WriteLine("This is 5 sec, RECORD!");
+                    Output.Text = "This is 5 sec, RECORD!";
                     timerWait.Stop();
                     timerRec.Start();
                 }
@@ -257,7 +266,7 @@ namespace HelloKinect
                 if (!contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId))
                     continue;
                 */
-                //StringBuilder strBuilder = new StringBuilder();
+                StringBuilder strBuilder = new StringBuilder();
 
                 foreach (Joint joint in skeleton.Joints)
                 {
@@ -277,11 +286,13 @@ namespace HelloKinect
                         if (joint.JointType.Equals(JointType.HandRight))
                         {
                             Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
+                            strBuilder.Append(String.Format("\nRight [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             rightList.AddLast(joint.Position.Y);
                         }
                         else if (joint.JointType.Equals(JointType.HandLeft))
                         {
                             Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
+                            strBuilder.Append(String.Format("\nLeft [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             leftList.AddLast(joint.Position.Y);
                         }
                     }
@@ -290,23 +301,31 @@ namespace HelloKinect
                         bool touched = false;
                         if (joint.JointType.Equals(JointType.HandRight)) {
                             Console.WriteLine(String.Format("Using right: {0}", cur_pos));
+                            strBuilder.Append(String.Format("\nUsing right: {0}", cur_pos));
                             //assume gesture array have only 6 elements
                             foreach (double coor in gesture1_right)
                             {
                                 touched |= IsWithinRange(cur_pos, coor);
                             }
-                            if(touched)
+                            if (touched)
+                            {
                                 Console.WriteLine("right detected");
+                                strBuilder.Append("\nright detected");
+                            }
                         }
                         else if (joint.JointType.Equals(JointType.HandLeft)) {
                             Console.WriteLine(String.Format("Using left: {0}", cur_pos));
+                            strBuilder.Append(String.Format("\nUsing left: {0}", cur_pos));
                             //assume gesture array have only 6 elements
                             foreach (double coor in gesture1_left)
                             {
                                 touched |= IsWithinRange(cur_pos, coor);
                             }
-                            if(touched)
+                            if (touched)
+                            {
                                 Console.WriteLine("left detected");
+                                strBuilder.Append("\nleft detected");
+                            }
                         }
                     }
                 }
@@ -315,7 +334,7 @@ namespace HelloKinect
 
                 //this is the place to draw sitting position or not
                 skeletonDisplayManager.Draw(frame.Skeletons, false);
-
+                Output.Text = strBuilder.ToString();
                 //we only care about 1 skeleton
                 break;
             }
@@ -376,7 +395,23 @@ namespace HelloKinect
         }
 
         void ButtonOnClick(Object sender, RoutedEventArgs e) {
-            MessageBox.Show("Button Clicked");
+            //MessageBox.Show("Button Clicked");
+            KinectCircleButton btn = (KinectCircleButton)sender;
+            //MessageBox.Show(btn.Content.ToString());
+            if (btn.Content.ToString() == "Record") {
+                OnStartRecord();
+            }
+            else if (btn.Content.ToString() == "Use")
+            {
+                OnTestGesture();
+            }
+            else if (btn.Content.ToString() == "Stop")
+            {
+                OnStopRecord();
+            }
+            else if (btn.Content.ToString() == "Export") {
+                OnWriteGesture();
+            }
         }
 
         //Voice trigger events
@@ -401,5 +436,59 @@ namespace HelloKinect
         enum RecordingStatus { 
            RECORD, STOP, USE 
         }
+
+        private void SensorChooserOnKinectChanged(object sender, KinectChangedEventArgs args)
+        {
+            bool error = false;
+            if (args.OldSensor != null)
+            {
+                try
+                {
+                    args.OldSensor.DepthStream.Range = DepthRange.Default;
+                    args.OldSensor.SkeletonStream.EnableTrackingInNearRange = false;
+                    args.OldSensor.DepthStream.Disable();
+                    args.OldSensor.SkeletonStream.Disable();
+                }
+                catch (InvalidOperationException)
+                {
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                    error = true;
+                }
+            }
+
+            if (args.NewSensor != null)
+            {
+                try
+                {
+                    args.NewSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+                    args.NewSensor.SkeletonStream.Enable();
+
+                    try
+                    {
+                        args.NewSensor.DepthStream.Range = DepthRange.Near;
+                        args.NewSensor.SkeletonStream.EnableTrackingInNearRange = true;
+                        args.NewSensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Non Kinect for Windows devices do not support Near mode, so reset back to default mode.
+                        args.NewSensor.DepthStream.Range = DepthRange.Default;
+                        args.NewSensor.SkeletonStream.EnableTrackingInNearRange = false;
+                        //error = true;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    error = true;
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                }
+            }
+
+            if (!error)
+                kinectRegion.KinectSensor = args.NewSensor;
+        }
+
     }
 }

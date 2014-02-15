@@ -1,0 +1,12 @@
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\.Debug\KinectInteraction180_32.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\.Debug\KinectInteraction180_64.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.pdb
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.csprojResolveAssemblyReference.cache
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.cache
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.lref
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Themes\Generic.baml
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.g.resources
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.dll
+D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.pdb
