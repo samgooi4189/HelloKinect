@@ -438,6 +438,8 @@ namespace HelloKinect
         }
 
         void OnWriteGesture(String gesture_syntax) {
+            if (gesture1_right.Count == 0 || gesture1_left.Count == 0)
+                return;
             fileManager.saveGesture(gesture_syntax, gesture1_right, gesture1_left);
         }
 
