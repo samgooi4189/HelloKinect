@@ -44,7 +44,7 @@ namespace HelloKinect
         LinkedList<double> gesture1_right = new LinkedList<double>();
         LinkedList<double> gesture1_left = new LinkedList<double>();
         //Voice control
-        VoiceCommander v_commander;
+        //VoiceCommander v_commander;
         RecordingStatus status = RecordingStatus.STOP;
         //file stream for gesture
         GestureIO fileManager;
@@ -161,20 +161,20 @@ namespace HelloKinect
 
             skeletonDisplayManager = new SkeletonDisplayManager(kinectSensor, kinectCanvas);
             //Add keywords that you wan to detect
-            v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "finish", "write");
+            //v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "finish", "write");
 
             kinectSensor.Start();
             //kinectDisplay.DataContext = colorManager;
 
-            v_commander.OrderDetected += voiceCommander_OrderDetected;
-            StartVoiceCommander();
+            //v_commander.OrderDetected += voiceCommander_OrderDetected;
+            //StartVoiceCommander();
 
             fileManager = new GestureIO();
             fileManager.loadGesture();
         }
 
         public void Clean() {
-            v_commander.OrderDetected -= voiceCommander_OrderDetected;
+            //v_commander.OrderDetected -= voiceCommander_OrderDetected;
             if (kinectSensor != null)
             {
                 kinectSensor.DepthFrameReady -= kinectSensor_DepthFrameReady;

@@ -13,7 +13,7 @@ namespace HelloKinect
     {
         void StartVoiceCommander()
         {
-            v_commander.Start(kinectSensor);
+            //v_commander.Start(kinectSensor);
         }
 
         void voiceCommander_OrderDetected(string order)
