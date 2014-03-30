@@ -426,6 +426,7 @@ namespace HelloKinect
             status = RecordingStatus.RECORD;
             gesture1_left.Clear();
             gesture1_right.Clear();
+
         }
 
         void OnStopRecord() {

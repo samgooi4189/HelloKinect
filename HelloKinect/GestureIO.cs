@@ -11,6 +11,8 @@ namespace HelloKinect
     {
 
         String dir_path;
+        char[] delimChar = {','};
+
         public GestureIO() {
             dir_path = Directory.GetCurrentDirectory();
             Console.WriteLine(dir_path);
@@ -20,21 +22,43 @@ namespace HelloKinect
             dir_path = target;
         }
 
-        public bool loadGesture() {
+        public Dictionary<String, GesturePackage> loadGesture() {
+            Dictionary<String, GesturePackage> gestureDic = new Dictionary<string, GesturePackage>();
             String txt_path = String.Format("{0}/gestures.kges", dir_path);
             if (File.Exists(txt_path)) {
-                LinkedList<String> content = new LinkedList<string>();
+                //LinkedList<String> content = new LinkedList<string>();
                 using (StreamReader reader = new StreamReader(txt_path)) { 
                     String input= "";
+                    int line_counter = 0;
+                    GesturePackage ges_pack;
                     while ((input = reader.ReadLine()) != null) {
-                        content.AddLast(input);
+                        //content.AddLast(input);
+                        String[] str_array = input.Split(delimChar);
+                        ges_pack = new GesturePackage(str_array[0]);
+                        foreach(String str in str_array){
+                            if (line_counter % 4 == 1 && ges_pack != null) {
+                                String[] left_coordinates = str.Split(':');
+                                for(int i=0; i<left_coordinates.Length; i+=2){
+                                    ges_pack.setLeftCoordinates(new CoordinateContainer(Double.Parse(left_coordinates[i]), Double.Parse(left_coordinates[i+1])) );
+                                }
+                            }
+                            else if (line_counter % 4 == 2 && ges_pack != null)
+                            {
+                                String[] right_coordinates = str.Split(':');
+                                for (int i = 0; i < right_coordinates.Length; i += 2)
+                                {
+                                    ges_pack.setRightCoordinates(new CoordinateContainer(Double.Parse(right_coordinates[i]), Double.Parse(right_coordinates[i + 1])));
+                                }
+                            }
+                        }
                         Console.WriteLine(input);
+                        gestureDic.Add(ges_pack.getName(), ges_pack);
+                        line_counter++;
                     }
                     reader.Close();
-                }
-                return true;   
+                }  
             }
-            return false;
+            return gestureDic;
         }
 
         public bool saveGesture(String gesture_name, LinkedList<CoordinateContainer> right_coordinates, LinkedList<CoordinateContainer> left_coordinates) {
