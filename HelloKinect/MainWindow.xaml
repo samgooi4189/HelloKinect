@@ -12,7 +12,7 @@
                 
                 <Canvas x:Name="kinectCanvas"/>
                 <TextBlock x:Name="Title" Text="IDE" FontSize="48" Width="200px" Margin="0,0,440,0" TextWrapping="Wrap"/>
-                <TextBlock x:Name="Output" Height="300px" Width="400px" Margin="10,170,230,10" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=StatusMessage}" />
+                <TextBlock x:Name="Output" Height="300px" Width="400px" Margin="10,170,230,10" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=StatusMessage}" FontSize="36" />
                 <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Top" Name="sensorChooserUi" />
                 <k:KinectUserViewer VerticalAlignment="Top" HorizontalAlignment="Center" k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="100" UserColoringMode="Manual" />
                 <k:KinectRegion Name="kinectRegion">

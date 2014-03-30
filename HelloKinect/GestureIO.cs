@@ -37,7 +37,7 @@ namespace HelloKinect
             return false;
         }
 
-        public bool saveGesture(String gesture_name, LinkedList<double> right_coordinates, LinkedList<double> left_coordinates) {
+        public bool saveGesture(String gesture_name, LinkedList<CoordinateContainer> right_coordinates, LinkedList<CoordinateContainer> left_coordinates) {
             try
             {
                 if (!Directory.Exists(dir_path))
@@ -52,12 +52,12 @@ namespace HelloKinect
                     using (StreamWriter streamWriter = File.CreateText(txt_path))
                     {
                         streamWriter.WriteLine(gesture_name);
-                        foreach (double r in right_coordinates)
+                        foreach (CoordinateContainer r in right_coordinates)
                         {
                             streamWriter.Write("{0}, ", r.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
-                        foreach (double l in left_coordinates)
+                        foreach (CoordinateContainer l in left_coordinates)
                         {
                             streamWriter.Write("{0}, ", l.ToString());
                         }
@@ -69,12 +69,12 @@ namespace HelloKinect
                 else {
                     using (StreamWriter streamWriter = File.AppendText(txt_path)) {
                         streamWriter.WriteLine(gesture_name);
-                        foreach (double r in right_coordinates)
+                        foreach (CoordinateContainer r in right_coordinates)
                         {
                             streamWriter.Write("{0}, ", r.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
-                        foreach (double l in left_coordinates)
+                        foreach (CoordinateContainer l in left_coordinates)
                         {
                             streamWriter.Write("{0}, ", l.ToString());
                         }
@@ -87,6 +87,7 @@ namespace HelloKinect
                 using (StreamReader reader = File.OpenText(txt_path)) {
                     string str = "";
                     while ((str = reader.ReadLine()) != null) {
+                        //read file and cache to the program
                         Console.WriteLine(str);
                     }
                     reader.Close();

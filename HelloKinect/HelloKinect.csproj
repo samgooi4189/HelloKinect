@@ -69,6 +69,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppOutput.cs" />
+    <Compile Include="CoordinateContainer.cs" />
     <Compile Include="GestureIO.cs" />
     <Compile Include="MainWindow.Voice.cs" />
     <Compile Include="MainWindow.xaml.cs">
