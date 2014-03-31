@@ -47,7 +47,7 @@ namespace HelloKinect
                         break;
                     case "write":
                         Console.WriteLine("Talk write");
-                        OnWriteGesture();
+                        OnWriteGesture("gesture1");
                         break;
                 }
             }));

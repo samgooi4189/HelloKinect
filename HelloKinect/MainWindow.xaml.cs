@@ -39,10 +39,10 @@ namespace HelloKinect
         Stopwatch timerRec = new Stopwatch();
         Stopwatch timerWait = new Stopwatch();
         //linked list for right and left hand
-        LinkedList<double> rightList = new LinkedList<double>();
-        LinkedList<double> leftList = new LinkedList<double>();
-        LinkedList<double> gesture1_right = new LinkedList<double>();
-        LinkedList<double> gesture1_left = new LinkedList<double>();
+        LinkedList<CoordinateContainer> rightList = new LinkedList<CoordinateContainer>();
+        LinkedList<CoordinateContainer> leftList = new LinkedList<CoordinateContainer>();
+        LinkedList<CoordinateContainer> gesture1_right = new LinkedList<CoordinateContainer>();
+        LinkedList<CoordinateContainer> gesture1_left = new LinkedList<CoordinateContainer>();
         //Voice control
         //VoiceCommander v_commander;
         RecordingStatus status = RecordingStatus.STOP;
@@ -237,7 +237,8 @@ namespace HelloKinect
         {
             Dictionary<int, string> stabilities = new Dictionary<int, string>();
             foreach (var skeleton in frame.Skeletons)
-            {   
+            {
+                StringBuilder strBuilder = new StringBuilder();
 
                 if (skeleton.TrackingState != SkeletonTrackingState.Tracked)
                     continue;
@@ -247,26 +248,24 @@ namespace HelloKinect
                 {
                     timerRec.Stop();
                     timerRec.Reset();
-                    Console.WriteLine("Start to wait........");
-                    Output.Text = ("Start to wait............");
+                    Console.WriteLine("Please wait while we process the gesture......");
+                    strBuilder.Append("Please wait while we process the gesture......\n");
                     ProcessGesture();
                     timerWait.Reset();
                     timerWait.Start();
                 }
                 if (timerWait.Elapsed.Seconds >= 5 && !timerRec.IsRunning)
                 {
-                    Console.WriteLine("This is 5 sec, RECORD!");
-                    Output.Text = "This is 5 sec, RECORD!";
+                    Console.WriteLine("Gesture recorded, NEXT GESTURE!");
+                    strBuilder.Append("Gesture recorded, NEXT GESTURE!\n");
                     timerWait.Stop();
                     timerRec.Start();
                 }
-
                 /*contextTracker.Add(skeleton.Position.ToVector3(), skeleton.TrackingId);
                 stabilities.Add(skeleton.TrackingId, contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId) ? "Stable" : "Non stable");
                 if (!contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId))
                     continue;
                 */
-                StringBuilder strBuilder = new StringBuilder();
 
                 foreach (Joint joint in skeleton.Joints)
                 {
@@ -287,44 +286,44 @@ namespace HelloKinect
                         {
                             Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             strBuilder.Append(String.Format("\nRight [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            rightList.AddLast(joint.Position.Y);
+                            rightList.AddLast(new CoordinateContainer(joint.Position.X, joint.Position.Y));
                         }
                         else if (joint.JointType.Equals(JointType.HandLeft))
                         {
                             Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             strBuilder.Append(String.Format("\nLeft [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            leftList.AddLast(joint.Position.Y);
+                            leftList.AddLast(new CoordinateContainer(joint.Position.X, joint.Position.Y));
                         }
                     }
                     else if (status == RecordingStatus.USE) {
                         double cur_pos = joint.Position.Y;
                         bool touched = false;
                         if (joint.JointType.Equals(JointType.HandRight)) {
-                            Console.WriteLine(String.Format("Using right: {0}", cur_pos));
-                            strBuilder.Append(String.Format("\nUsing right: {0}", cur_pos));
+                            Console.WriteLine(String.Format("Using right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            strBuilder.Append(String.Format("\nUsing right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
                             //assume gesture array have only 6 elements
-                            foreach (double coor in gesture1_right)
+                            foreach (CoordinateContainer container in gesture1_right)
                             {
-                                touched |= IsWithinRange(cur_pos, coor);
+                                touched |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
                             }
                             if (touched)
                             {
-                                Console.WriteLine("right detected");
-                                strBuilder.Append("\nright detected");
+                                Console.WriteLine("Right Hand gesture detected");
+                                strBuilder.Append("\nRight Hand gesture detected");
                             }
                         }
                         else if (joint.JointType.Equals(JointType.HandLeft)) {
-                            Console.WriteLine(String.Format("Using left: {0}", cur_pos));
-                            strBuilder.Append(String.Format("\nUsing left: {0}", cur_pos));
+                            Console.WriteLine(String.Format("Using left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            strBuilder.Append(String.Format("\nUsing left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
                             //assume gesture array have only 6 elements
-                            foreach (double coor in gesture1_left)
+                            foreach (CoordinateContainer container in gesture1_left)
                             {
-                                touched |= IsWithinRange(cur_pos, coor);
+                                touched |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
                             }
                             if (touched)
                             {
-                                Console.WriteLine("left detected");
-                                strBuilder.Append("\nleft detected");
+                                Console.WriteLine("Left Hand gesture detected");
+                                strBuilder.Append("\nLeft Hand gesture detected");
                             }
                         }
                     }
@@ -358,12 +357,15 @@ namespace HelloKinect
             gesture1_right.AddLast(rightList.Last());
             gesture1_left.AddLast(leftList.Last());
 
-            double rightDiff = Math.Abs(rightList.Last() - rightList.First());
-            double leftDiff = Math.Abs(leftList.Last() - leftList.First());
+            //only consider last coordinate
+            double rightXDiff = Math.Abs(rightList.Last().getX() - rightList.Last().getX());
+            double rightYDiff = Math.Abs(rightList.Last().getY() - rightList.Last().getY());
+            double leftXDiff = Math.Abs(leftList.Last().getX() - leftList.Last().getX());
+            double leftYDiff = Math.Abs(leftList.Last().getY() - leftList.Last().getY());
             rightList.Clear();
             leftList.Clear();
 
-            Console.WriteLine(String.Format("Right Diff: {0}, Left Diff: {1} ", rightDiff, leftDiff));
+            Console.WriteLine(String.Format("Right Diff: {0}, Left Diff: {1} ", (rightXDiff+rightYDiff)/2.00, (leftXDiff+leftYDiff)/2.00 ));
         }
 
         void replay_DepthImageFrameReady(object sender, ReplayDepthImageFrameReadyEventArgs e)
@@ -387,8 +389,12 @@ namespace HelloKinect
             ProcessFrame(e.SkeletonFrame);
         }
 
+        /*
+         * This function check the coordinate within range
+         */
         bool IsWithinRange(double cur, double stored) {
-            if (cur < stored + 0.05 && cur > stored - 0.05) {
+            double range = 0.02;
+            if (cur < stored + range && cur > stored - range) {
                 return true;
             }
             return false;
@@ -410,7 +416,8 @@ namespace HelloKinect
                 OnStopRecord();
             }
             else if (btn.Content.ToString() == "Export") {
-                OnWriteGesture();
+                //Here you will be link gesture to syntax
+                OnWriteGesture("gesture1");
             }
         }
 
@@ -419,6 +426,7 @@ namespace HelloKinect
             status = RecordingStatus.RECORD;
             gesture1_left.Clear();
             gesture1_right.Clear();
+
         }
 
         void OnStopRecord() {
@@ -429,8 +437,10 @@ namespace HelloKinect
             status = RecordingStatus.USE;
         }
 
-        void OnWriteGesture() {
-            fileManager.saveGesture("gesture1", gesture1_right, gesture1_left);
+        void OnWriteGesture(String gesture_syntax) {
+            if (gesture1_right.Count == 0 || gesture1_left.Count == 0)
+                return;
+            fileManager.saveGesture(gesture_syntax, gesture1_right, gesture1_left);
         }
 
         enum RecordingStatus { 
