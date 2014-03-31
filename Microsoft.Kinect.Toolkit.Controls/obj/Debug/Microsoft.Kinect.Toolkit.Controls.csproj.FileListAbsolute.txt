@@ -10,3 +10,15 @@ D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\
 D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.g.resources
 D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.dll
 D:\samgooi4189\Downloads\kinect\KinectToolbox\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.pdb
+D:\NEST\HelloKinect\KinectToolbox\.Debug\KinectInteraction180_32.dll
+D:\NEST\HelloKinect\KinectToolbox\.Debug\KinectInteraction180_64.dll
+D:\NEST\HelloKinect\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.dll
+D:\NEST\HelloKinect\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.pdb
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.csprojResolveAssemblyReference.cache
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.cache
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.lref
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Themes\Generic.baml
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.g.resources
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.dll
+D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.pdb
