@@ -31,6 +31,8 @@ namespace HelloKinect
     {
         public KinectSensor kinectSensor;
         private KinectSensorChooser sensorChooser;
+        private Skeleton[] skeletons;
+        SkeletonDisplayManager skeletonDisplayManager;
         readonly ColorStreamManager colorManager = new ColorStreamManager();
         readonly DepthStreamManager depthManager = new DepthStreamManager();
         bool displayDepth = false;
@@ -93,7 +95,7 @@ namespace HelloKinect
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.sensorChooser = new KinectSensorChooser();
-            //this.sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
+            this.sensorChooser.KinectChanged += SensorChooserOnKinectChanged;
             this.sensorChooserUi.KinectSensorChooser = this.sensorChooser;
             this.sensorChooser.Start();
 
@@ -151,7 +153,10 @@ namespace HelloKinect
                 Prediction = 0.5f,
                 JitterRadius = 0.05f,
                 MaxDeviationRadius = 0.04f
-            }); 
+            });
+
+            kinectSensor.SkeletonFrameReady += kinectRuntime_SkeletonFrameReady;
+
             //Add keywords that you wan to detect
             //v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "finish", "write");
 
@@ -171,8 +176,25 @@ namespace HelloKinect
             {
                 kinectSensor.DepthFrameReady -= kinectSensor_DepthFrameReady;
                 kinectSensor.ColorFrameReady -= kinectRuntime_ColorFrameReady;
+                kinectSensor.SkeletonFrameReady -= kinectRuntime_SkeletonFrameReady;
                 kinectSensor.Stop();
                 kinectSensor = null;
+            }
+        }
+
+
+        void kinectRuntime_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
+        {
+
+            using (SkeletonFrame frame = e.OpenSkeletonFrame())
+            {
+                if (frame == null)
+                    return;
+
+                frame.GetSkeletons(ref skeletons);
+
+                if (skeletons.All(s => s.TrackingState == SkeletonTrackingState.NotTracked))
+                    return;
             }
         }
 
@@ -205,6 +227,59 @@ namespace HelloKinect
 
                 colorManager.Update(frame);
             }
+        }
+
+        private void SensorChooserOnKinectChanged(object sender, KinectChangedEventArgs args)
+        {
+            bool error = false;
+            if (args.OldSensor != null)
+            {
+                try
+                {
+                    args.OldSensor.DepthStream.Range = DepthRange.Default;
+                    args.OldSensor.SkeletonStream.EnableTrackingInNearRange = false;
+                    args.OldSensor.DepthStream.Disable();
+                    args.OldSensor.SkeletonStream.Disable();
+                }
+                catch (InvalidOperationException)
+                {
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                    error = true;
+                }
+            }
+
+            if (args.NewSensor != null)
+            {
+                try
+                {
+                    args.NewSensor.DepthStream.Enable(DepthImageFormat.Resolution640x480Fps30);
+                    args.NewSensor.SkeletonStream.Enable();
+
+                    try
+                    {
+                        args.NewSensor.DepthStream.Range = DepthRange.Near;
+                        args.NewSensor.SkeletonStream.EnableTrackingInNearRange = true;
+                        args.NewSensor.SkeletonStream.TrackingMode = SkeletonTrackingMode.Seated;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Non Kinect for Windows devices do not support Near mode, so reset back to default mode.
+                        args.NewSensor.DepthStream.Range = DepthRange.Default;
+                        args.NewSensor.SkeletonStream.EnableTrackingInNearRange = false;
+                        //error = true;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    error = true;
+                    // KinectSensor might enter an invalid state while enabling/disabling streams or stream features.
+                    // E.g.: sensor might be abruptly unplugged.
+                }
+            }
+
+            if (!error)
+                kinectRegion.KinectSensor = args.NewSensor;
         }
 
 
