@@ -49,6 +49,8 @@ namespace HelloKinect
         //file stream for gesture
         GestureIO fileManager;
 
+        bool m_isInRecordMode;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -401,21 +403,48 @@ namespace HelloKinect
         }
 
         void ButtonOnClick(Object sender, RoutedEventArgs e) {
-            //MessageBox.Show("Button Clicked");
-            KinectCircleButton btn = (KinectCircleButton)sender;
-            //MessageBox.Show(btn.Content.ToString());
-            if (btn.Content.ToString() == "Record") {
+            KinectTileButton btn = (KinectTileButton)sender;
+            
+            if (btn == recordButton) {
                 OnStartRecord();
             }
-            else if (btn.Content.ToString() == "Use")
+            else if (btn == useButton)
             {
                 OnTestGesture();
             }
-            else if (btn.Content.ToString() == "Stop")
+            else if (btn == stopButton)
             {
                 OnStopRecord();
             }
-            else if (btn.Content.ToString() == "Export") {
+            else if (btn == modeButton)
+            {
+                if (m_isInRecordMode)
+                {
+                    m_isInRecordMode = false;
+                    recordButton.Visibility = System.Windows.Visibility.Hidden;
+                    useButton.Visibility = System.Windows.Visibility.Hidden;
+                    stopButton.Visibility = System.Windows.Visibility.Hidden;
+                    exportButton.Visibility = System.Windows.Visibility.Hidden;
+
+                    codeView.Visibility = System.Windows.Visibility.Visible;
+                    consoleView.Visibility = System.Windows.Visibility.Visible;
+                    runButton.Visibility = System.Windows.Visibility.Visible;
+                }
+                else
+                {
+                    m_isInRecordMode = true;
+                    recordButton.Visibility = System.Windows.Visibility.Visible;
+                    useButton.Visibility = System.Windows.Visibility.Visible;
+                    stopButton.Visibility = System.Windows.Visibility.Visible;
+                    exportButton.Visibility = System.Windows.Visibility.Visible;
+
+                    codeView.Visibility = System.Windows.Visibility.Hidden;
+                    consoleView.Visibility = System.Windows.Visibility.Hidden;
+                    runButton.Visibility = System.Windows.Visibility.Hidden;
+                }
+            }
+            else if (btn == exportButton)
+            {
                 //Here you will be link gesture to syntax
                 OnWriteGesture("gesture1");
             }
@@ -498,6 +527,11 @@ namespace HelloKinect
 
             if (!error)
                 kinectRegion.KinectSensor = args.NewSensor;
+        }
+
+        private void OnRunPython(object sender, RoutedEventArgs e)
+        {
+
         }
 
     }

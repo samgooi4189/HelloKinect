@@ -82,6 +82,7 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -104,6 +105,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppOutput.cs" />
+    <Compile Include="CoordinateContainer.cs" />
     <Compile Include="TextBoxStreamWriter.cs" />
     <Compile Include="GestureIO.cs" />
     <Compile Include="Interpreter.xaml.cs">

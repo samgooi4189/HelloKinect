@@ -9,18 +9,22 @@
     <Grid>
         <Viewbox Margin="5" Grid.RowSpan="6">
             <Grid Width="640" Height="480" ClipToBounds="True">
-                
+
                 <Canvas x:Name="kinectCanvas"/>
                 <TextBlock x:Name="Title" Text="IDE" FontSize="48" Width="200px" Margin="0,0,440,0" TextWrapping="Wrap"/>
                 <TextBlock x:Name="Output" Height="300px" Width="400px" Margin="10,170,230,10" Text="{Binding UpdateSourceTrigger=PropertyChanged, Path=StatusMessage}" FontSize="36" />
                 <k:KinectSensorChooserUI HorizontalAlignment="Center" VerticalAlignment="Top" Name="sensorChooserUi" />
                 <k:KinectUserViewer VerticalAlignment="Top" HorizontalAlignment="Center" k:KinectRegion.KinectRegion="{Binding ElementName=kinectRegion}" Height="100" UserColoringMode="Manual" />
-                <k:KinectRegion Name="kinectRegion">
+                <k:KinectRegion Name="kinectRegion" Margin="-36,0,0,0">
                     <Grid>
-                        <k:KinectCircleButton Label="Record" Content="Record" HorizontalAlignment="Right" Height="150" Click="ButtonOnClick" Margin="0,0,10,280" Foreground="Black"/>
-                        <k:KinectCircleButton Label="Stop" Content="Stop" HorizontalAlignment="Right" Height="150" Click="ButtonOnClick" Margin="0,175,10,155"/>
-                        <k:KinectCircleButton Label="Use" Content="Use" HorizontalAlignment="Right" Height="150" Click="ButtonOnClick" Margin="0,280,10,0"/>
-                        <k:KinectCircleButton Label="Export" Content="Export" HorizontalAlignment="Right" Height="150" Click="ButtonOnClick" Margin="0,320,465,10"/>
+                        <k:KinectTileButton x:Name="recordButton" Content="Record" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,128,0,243" Foreground="Black" Width="167" RenderTransformOrigin="0.468,-0.593"/>
+                        <k:KinectTileButton x:Name="modeButton" Content="Mode" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,10,0,357" Foreground="Black" Width="167"/>
+                        <k:KinectTileButton x:Name="stopButton"  Content="Stop" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,246,0,125" Width="167"/>
+                        <k:KinectTileButton x:Name="useButton"  Content="Use" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,363,0,0" Width="167"/>
+                        <k:KinectTileButton x:Name="exportButton"  Content="Export" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,363,473,0" Width="167"/>
+                        <k:KinectTileButton x:Name="runButton"  Content="Run" HorizontalAlignment="Right" Visibility="Hidden" Height="Auto" Click="OnRunPython" Margin="0,363,473,0" Width="167"/>
+                        <k:KinectScrollViewer x:Name="codeView" Content="[CODE DISPLAYED HERE]" Margin="512,128,-23,4" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" />
+                        <k:KinectScrollViewer x:Name="consoleView" Content="[OUTPUT DISPLAYED HERE]" Margin="208,368,182,5" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" />
                     </Grid>
                 </k:KinectRegion>
             </Grid>
