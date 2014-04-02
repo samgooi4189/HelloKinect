@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.IO;
 using Kinect.Toolbox;
 using Kinect.Toolbox.Voice;
 using Microsoft.Kinect;
@@ -20,6 +21,9 @@ using Kinect.Toolbox.Record;
 using System.Timers;
 using Microsoft.Kinect.Toolkit;
 using Microsoft.Kinect.Toolkit.Controls;
+using IronPython.Hosting;
+using Microsoft.Scripting;
+using Microsoft.Scripting.Hosting;
 
 namespace HelloKinect
 {
@@ -50,6 +54,13 @@ namespace HelloKinect
         GestureIO fileManager;
 
         bool m_isInRecordMode;
+
+        //IronPython Variables
+        private string m_codeString = "print 5";
+        private string m_consoleString = "";
+        private ScriptEngine m_engine = Python.CreateEngine();
+        private ScriptScope m_scope = null;
+        private MemoryStream m_ms = new MemoryStream();
 
         public MainWindow()
         {
@@ -531,7 +542,33 @@ namespace HelloKinect
 
         private void OnRunPython(object sender, RoutedEventArgs e)
         {
+            m_ms = new MemoryStream();
+            m_engine.Runtime.IO.SetOutput(m_ms, new StreamWriter(m_ms));
+            m_scope = m_engine.CreateScope();
 
+            ScriptSource source = m_engine.CreateScriptSourceFromString(m_codeString, SourceCodeKind.Statements);
+            object result = source.Execute(m_scope);
+
+            string str = ReadFromStream(m_ms);
+            WriteToIDE(str);
+            m_ms.Close(); 
+        }
+
+        private string ReadFromStream(MemoryStream ms)
+        {
+            int length = (int)ms.Length;
+            Byte[] bytes = new Byte[length];
+
+            ms.Seek(0, SeekOrigin.Begin);
+            ms.Read(bytes, 0, (int)ms.Length);
+
+            return Encoding.GetEncoding("utf-8").GetString(bytes, 0, (int)ms.Length);
+        }
+
+        private void WriteToIDE(string output)
+        {
+            m_consoleString += output;
+            consoleView.Content = m_consoleString;
         }
 
     }
