@@ -62,6 +62,12 @@ namespace HelloKinect
         private ScriptScope m_scope = null;
         private MemoryStream m_ms = new MemoryStream();
 
+        //buffer variables (between gestures during coding mode)
+        private System.DateTime m_timeToEndAt;
+        private const double k_secondsToBuffer = 40.0;
+        private bool m_useGestureLocked = false;
+        private string m_gestureLockMessage = "";
+
         public MainWindow()
         {
             InitializeComponent();
@@ -274,12 +280,14 @@ namespace HelloKinect
                     timerWait.Stop();
                     timerRec.Start();
                 }
+
                 /*contextTracker.Add(skeleton.Position.ToVector3(), skeleton.TrackingId);
                 stabilities.Add(skeleton.TrackingId, contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId) ? "Stable" : "Non stable");
                 if (!contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId))
                     continue;
                 */
-
+                bool touchedLeft = false;
+                bool touchedRight = false;
                 foreach (Joint joint in skeleton.Joints)
                 {
                     if (status == RecordingStatus.STOP)
@@ -287,6 +295,18 @@ namespace HelloKinect
 
                     if (!timerRec.IsRunning) {
                         continue;
+                    }
+
+                    if (m_useGestureLocked && (System.DateTime.Now >= m_timeToEndAt))
+                    {
+                        strBuilder.Append("Unlocking");
+                        m_useGestureLocked = false;
+                        break;
+                    }
+                    else if (m_useGestureLocked)
+                    {
+                        strBuilder.Append("Locked - " + m_gestureLockMessage);
+                        break;
                     }
 
                     if (joint.TrackingState != JointTrackingState.Tracked)
@@ -310,16 +330,15 @@ namespace HelloKinect
                     }
                     else if (status == RecordingStatus.USE) {
                         double cur_pos = joint.Position.Y;
-                        bool touched = false;
                         if (joint.JointType.Equals(JointType.HandRight)) {
                             Console.WriteLine(String.Format("Using right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
                             strBuilder.Append(String.Format("\nUsing right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
                             //assume gesture array have only 6 elements
                             foreach (CoordinateContainer container in gesture1_right)
                             {
-                                touched |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
+                                touchedLeft |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
                             }
-                            if (touched)
+                            if (touchedLeft)
                             {
                                 Console.WriteLine("Right Hand gesture detected");
                                 strBuilder.Append("\nRight Hand gesture detected");
@@ -331,13 +350,21 @@ namespace HelloKinect
                             //assume gesture array have only 6 elements
                             foreach (CoordinateContainer container in gesture1_left)
                             {
-                                touched |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
+                                touchedRight |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
                             }
-                            if (touched)
+                            if (touchedRight)
                             {
                                 Console.WriteLine("Left Hand gesture detected");
                                 strBuilder.Append("\nLeft Hand gesture detected");
                             }
+                        }
+
+                        //if a gesture was discovered, lock for time buffer
+                        if (touchedLeft && touchedRight)
+                        {
+                            m_timeToEndAt = System.DateTime.Now.AddSeconds(k_secondsToBuffer);
+                            m_useGestureLocked = true;
+                            m_gestureLockMessage = strBuilder.ToString();
                         }
                     }
                 }
