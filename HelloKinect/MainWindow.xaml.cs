@@ -43,10 +43,10 @@ namespace HelloKinect
         Stopwatch timerRec = new Stopwatch();
         Stopwatch timerWait = new Stopwatch();
         //linked list for right and left hand
-        LinkedList<CoordinateContainer> rightList = new LinkedList<CoordinateContainer>();
-        LinkedList<CoordinateContainer> leftList = new LinkedList<CoordinateContainer>();
-        LinkedList<CoordinateContainer> gesture1_right = new LinkedList<CoordinateContainer>();
-        LinkedList<CoordinateContainer> gesture1_left = new LinkedList<CoordinateContainer>();
+        List<CoordinateContainer> rightList = new List<CoordinateContainer>();
+        List<CoordinateContainer> leftList = new List<CoordinateContainer>();
+        List<CoordinateContainer> gesture1_right = new List<CoordinateContainer>();
+        List<CoordinateContainer> gesture1_left = new List<CoordinateContainer>();
         //Voice control
         //VoiceCommander v_commander;
         RecordingStatus status = RecordingStatus.STOP;
@@ -319,13 +319,13 @@ namespace HelloKinect
                         {
                             Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             strBuilder.Append(String.Format("\nRight [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            rightList.AddLast(new CoordinateContainer(joint.Position.X, joint.Position.Y));
+                            rightList.Add(new CoordinateContainer(joint.Position.X, joint.Position.Y));
                         }
                         else if (joint.JointType.Equals(JointType.HandLeft))
                         {
                             Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
                             strBuilder.Append(String.Format("\nLeft [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            leftList.AddLast(new CoordinateContainer(joint.Position.X, joint.Position.Y));
+                            leftList.Add(new CoordinateContainer(joint.Position.X, joint.Position.Y));
                         }
                     }
                     else if (status == RecordingStatus.USE) {
@@ -394,8 +394,8 @@ namespace HelloKinect
             leftSUM /= leftList.Count;
             gesture1_right.AddLast(rightSUM);
             gesture1_left.AddLast(leftSUM);*/
-            gesture1_right.AddLast(rightList.Last());
-            gesture1_left.AddLast(leftList.Last());
+            gesture1_right.Add(rightList.Last());
+            gesture1_left.Add(leftList.Last());
 
             //only consider last coordinate
             double rightXDiff = Math.Abs(rightList.Last().getX() - rightList.Last().getX());
@@ -484,7 +484,10 @@ namespace HelloKinect
             else if (btn == exportButton)
             {
                 //Here you will be link gesture to syntax
-                OnWriteGesture("gesture1");
+                SelectionWindow window = new SelectionWindow();
+                window.Show();
+                this.Close();
+                //OnWriteGesture("gesture1");
             }
         }
 
@@ -508,6 +511,11 @@ namespace HelloKinect
             if (gesture1_right.Count == 0 || gesture1_left.Count == 0)
                 return;
             fileManager.saveGesture(gesture_syntax, gesture1_right, gesture1_left);
+        }
+
+        public void OpenMain(GesturePackage package) {
+            fileManager.saveGesture(package.getName(), package.getRightCoordinates(), package.getLeftCoordinates());
+            this.Show();
         }
 
         enum RecordingStatus { 

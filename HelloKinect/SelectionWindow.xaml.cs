@@ -32,11 +32,12 @@ namespace HelloKinect
         public KinectSensor kinectSensor;
         private KinectSensorChooser sensorChooser;
         private Skeleton[] skeletons;
-        SkeletonDisplayManager skeletonDisplayManager;
         readonly ColorStreamManager colorManager = new ColorStreamManager();
         readonly DepthStreamManager depthManager = new DepthStreamManager();
         bool displayDepth = false;
         GestureIO fileManager;
+        List<CoordinateContainer> left_coordinates = new List<CoordinateContainer>();
+        List<CoordinateContainer> right_coordinates = new List<CoordinateContainer>();
 
         List<string> keywordList = new List<string>();
         List<string> operatorList = new List<string>();
@@ -401,6 +402,16 @@ namespace HelloKinect
             KinectTileButton btn = (KinectTileButton)sender;
             selectedToken = btn.Content.ToString();
             Console.WriteLine(selectedToken);
+            //Back to the main windows
+            MainWindow main = new MainWindow();
+            main.Show();
+            this.Close();
+        }
+
+        public void OpenWindow(List<CoordinateContainer> corL, List<CoordinateContainer> corR){
+            left_coordinates = corL;
+            right_coordinates = corR;
+            this.Show();
         }
 
         void PopulateLists(){

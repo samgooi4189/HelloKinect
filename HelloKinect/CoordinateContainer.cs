@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HelloKinect
 {
-    class CoordinateContainer
+    public class CoordinateContainer
     {
         protected double x_position;
         protected double y_position;
@@ -28,7 +28,7 @@ namespace HelloKinect
         }
     }
 
-    class GesturePackage{
+    public class GesturePackage{
         String gesture_name;
         List<CoordinateContainer> left_coordinates_list = new List<CoordinateContainer>();
         List<CoordinateContainer> right_coordinates_list = new List<CoordinateContainer>();

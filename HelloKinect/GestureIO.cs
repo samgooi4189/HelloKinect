@@ -61,7 +61,7 @@ namespace HelloKinect
             return gestureDic;
         }
 
-        public bool saveGesture(String gesture_name, LinkedList<CoordinateContainer> right_coordinates, LinkedList<CoordinateContainer> left_coordinates) {
+        public bool saveGesture(String gesture_name, List<CoordinateContainer> right_coordinates, List<CoordinateContainer> left_coordinates) {
             try
             {
                 if (!Directory.Exists(dir_path))
