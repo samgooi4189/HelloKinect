@@ -441,6 +441,7 @@ namespace HelloKinect
             variableList.Add("variable3");
             variableList.Add("variable4");
             variableList.Add("variable5");
+            variableList.Add("1");
         }
 
     }

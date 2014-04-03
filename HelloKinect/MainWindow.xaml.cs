@@ -56,7 +56,7 @@ namespace HelloKinect
         bool m_isInRecordMode;
 
         //IronPython Variables
-        private string m_codeString = "print 5";
+        private string m_codeString = "";
         private string m_consoleString = "";
         private ScriptEngine m_engine = Python.CreateEngine();
         private ScriptScope m_scope = null;
@@ -399,6 +399,8 @@ namespace HelloKinect
                                 m_gestureLockMessage = strBuilder.ToString();
                                 strBuilder.Append("\n" + gesture1_right[m_leftIndex].name);
                                 Console.WriteLine(gesture1_right[m_leftIndex].name);
+                                m_codeString = m_codeString + gesture1_right[m_leftIndex].name + " ";
+                                codeView.Content = m_codeString;
                                 m_leftIndex = -1;
                                 m_rightIndex = -1;
                                 touchedRight = false;
@@ -504,6 +506,8 @@ namespace HelloKinect
                     stopButton.Visibility = System.Windows.Visibility.Hidden;
                     exportButton.Visibility = System.Windows.Visibility.Hidden;
 
+                    OnTestGesture();
+
                     codeView.Visibility = System.Windows.Visibility.Visible;
                     consoleView.Visibility = System.Windows.Visibility.Visible;
                     runButton.Visibility = System.Windows.Visibility.Visible;
@@ -511,10 +515,15 @@ namespace HelloKinect
                 else
                 {
                     m_isInRecordMode = true;
+                    
                     recordButton.Visibility = System.Windows.Visibility.Visible;
                     useButton.Visibility = System.Windows.Visibility.Visible;
                     stopButton.Visibility = System.Windows.Visibility.Visible;
                     exportButton.Visibility = System.Windows.Visibility.Visible;
+
+                    OnStopRecord();
+                    m_codeString = "";
+                    codeView.Content = m_codeString;
 
                     codeView.Visibility = System.Windows.Visibility.Hidden;
                     consoleView.Visibility = System.Windows.Visibility.Hidden;
