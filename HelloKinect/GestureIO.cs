@@ -30,29 +30,36 @@ namespace HelloKinect
                 using (StreamReader reader = new StreamReader(txt_path)) { 
                     String input= "";
                     int line_counter = 0;
-                    GesturePackage ges_pack;
+                    GesturePackage ges_pack = null;
                     while ((input = reader.ReadLine()) != null) {
                         //content.AddLast(input);
                         String[] str_array = input.Split(delimChar);
-                        ges_pack = new GesturePackage(str_array[0]);
+                        if (line_counter % 4 == 0)
+                        {
+                            ges_pack = new GesturePackage(str_array[0]);
+                        }
                         foreach(String str in str_array){
                             if (line_counter % 4 == 1 && ges_pack != null) {
-                                String[] left_coordinates = str.Split(':');
-                                for(int i=0; i<left_coordinates.Length; i+=2){
-                                    ges_pack.setLeftCoordinates(new CoordinateContainer(Double.Parse(left_coordinates[i]), Double.Parse(left_coordinates[i+1])) );
-                                }
+                                string[] right_coordinates = str.Split(':');
+                                ges_pack.setRightCoordinates(new CoordinateContainer(Double.Parse(right_coordinates[0]), Double.Parse(right_coordinates[1]), ges_pack.getName()));
+
                             }
                             else if (line_counter % 4 == 2 && ges_pack != null)
                             {
-                                String[] right_coordinates = str.Split(':');
-                                for (int i = 0; i < right_coordinates.Length; i += 2)
-                                {
-                                    ges_pack.setRightCoordinates(new CoordinateContainer(Double.Parse(right_coordinates[i]), Double.Parse(right_coordinates[i + 1])));
-                                }
+                                string[] left_coordinates = str.Split(':');
+                                ges_pack.setLeftCoordinates(new CoordinateContainer(Double.Parse(left_coordinates[0]), Double.Parse(left_coordinates[1]), ges_pack.getName()));
                             }
                         }
                         Console.WriteLine(input);
-                        gestureDic.Add(ges_pack.getName(), ges_pack);
+
+                        if (!gestureDic.ContainsKey(ges_pack.getName()))
+                        {
+                            gestureDic.Add(ges_pack.getName(), ges_pack);
+                        }
+                        else
+                        {
+                            gestureDic[ges_pack.getName()] = ges_pack;
+                        }
                         line_counter++;
                     }
                     reader.Close();
@@ -78,12 +85,12 @@ namespace HelloKinect
                         streamWriter.WriteLine(gesture_name);
                         foreach (CoordinateContainer r in right_coordinates)
                         {
-                            streamWriter.Write("{0}, ", r.ToString());
+                            streamWriter.Write("{0}", r.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
                         foreach (CoordinateContainer l in left_coordinates)
                         {
-                            streamWriter.Write("{0}, ", l.ToString());
+                            streamWriter.Write("{0}", l.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
                         streamWriter.Write(System.Environment.NewLine);
@@ -95,12 +102,12 @@ namespace HelloKinect
                         streamWriter.WriteLine(gesture_name);
                         foreach (CoordinateContainer r in right_coordinates)
                         {
-                            streamWriter.Write("{0}, ", r.ToString());
+                            streamWriter.Write("{0}", r.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
                         foreach (CoordinateContainer l in left_coordinates)
                         {
-                            streamWriter.Write("{0}, ", l.ToString());
+                            streamWriter.Write("{0}", l.ToString());
                         }
                         streamWriter.Write(System.Environment.NewLine);
                         streamWriter.Write(System.Environment.NewLine);

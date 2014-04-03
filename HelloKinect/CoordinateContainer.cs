@@ -10,9 +10,18 @@ namespace HelloKinect
     {
         protected double x_position;
         protected double y_position;
+        public string name;
+
         public CoordinateContainer(double x, double y) {
             x_position = x;
             y_position = y;
+        }
+
+        public CoordinateContainer(double x, double y, string name)
+        {
+            x_position = x;
+            y_position = y;
+            this.name = name;
         }
 
         public double getX() {
@@ -24,7 +33,7 @@ namespace HelloKinect
         }
 
         public override String ToString(){
-            return String.Format("[{0}: {1}]", x_position.ToString(), y_position.ToString());
+            return String.Format("{0}: {1}", x_position.ToString(), y_position.ToString());
         }
     }
 
@@ -40,12 +49,19 @@ namespace HelloKinect
         public String getName() {
             return gesture_name;
         }
+
         public void setLeftCoordinates(CoordinateContainer left_coordinate) {
             left_coordinates_list.Add(left_coordinate);
+        }
+        public void setLeftCoordinates(List<CoordinateContainer> left_list) {
+            left_coordinates_list.AddRange(left_list);
         }
 
         public void setRightCoordinates(CoordinateContainer right_coordinate) {
             right_coordinates_list.Add(right_coordinate);
+        }
+        public void setRightCoordinates(List<CoordinateContainer> right_list) {
+            right_coordinates_list.AddRange(right_list);
         }
 
         public List<CoordinateContainer> getLeftCoordinates() {

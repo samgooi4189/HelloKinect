@@ -404,8 +404,12 @@ namespace HelloKinect
             Console.WriteLine(selectedToken);
             //Back to the main windows
             MainWindow main = new MainWindow();
-            main.Show();
+            GesturePackage pk = new GesturePackage(selectedToken);
+            pk.setLeftCoordinates(left_coordinates);
+            pk.setRightCoordinates(right_coordinates);
+            Clean();
             this.Close();
+            main.OpenMain(pk);
         }
 
         public void OpenWindow(List<CoordinateContainer> corL, List<CoordinateContainer> corR){

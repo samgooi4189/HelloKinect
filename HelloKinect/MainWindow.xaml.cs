@@ -51,7 +51,7 @@ namespace HelloKinect
         //VoiceCommander v_commander;
         RecordingStatus status = RecordingStatus.STOP;
         //file stream for gesture
-        GestureIO fileManager;
+        GestureIO fileManager = new GestureIO();
 
         bool m_isInRecordMode;
 
@@ -64,9 +64,12 @@ namespace HelloKinect
 
         //buffer variables (between gestures during coding mode)
         private System.DateTime m_timeToEndAt;
-        private const double k_secondsToBuffer = 40.0;
+        private const double k_secondsToBuffer = 5.0;
         private bool m_useGestureLocked = false;
         private string m_gestureLockMessage = "";
+
+        private int m_rightIndex = -1;
+        private int m_leftIndex = -1;
 
         public MainWindow()
         {
@@ -188,11 +191,19 @@ namespace HelloKinect
             //v_commander.OrderDetected += voiceCommander_OrderDetected;
             //StartVoiceCommander();
 
-            fileManager = new GestureIO();
-            fileManager.loadGesture();
+            Dictionary<string, GesturePackage> gestureDic = fileManager.loadGesture();
+            GesturePackage[] values = new GesturePackage[gestureDic.Values.Count];
+            gestureDic.Values.CopyTo(values, 0);
+
+            foreach (GesturePackage package in values)
+            {
+                gesture1_left.Add(package.getLeftCoordinates()[0]);
+                gesture1_right.Add(package.getRightCoordinates()[0]);
+            }
         }
 
-        public void Clean() {
+        public void Clean()
+        {
             //v_commander.OrderDetected -= voiceCommander_OrderDetected;
             if (kinectSensor != null)
             {
@@ -331,40 +342,68 @@ namespace HelloKinect
                     else if (status == RecordingStatus.USE) {
                         double cur_pos = joint.Position.Y;
                         if (joint.JointType.Equals(JointType.HandRight)) {
-                            Console.WriteLine(String.Format("Using right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            strBuilder.Append(String.Format("\nUsing right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            //Console.WriteLine(String.Format("Using right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            //strBuilder.Append(String.Format("\nUsing right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
                             //assume gesture array have only 6 elements
+                            int rightIndex = 0;
                             foreach (CoordinateContainer container in gesture1_right)
                             {
-                                touchedLeft |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
-                            }
-                            if (touchedLeft)
-                            {
-                                Console.WriteLine("Right Hand gesture detected");
-                                strBuilder.Append("\nRight Hand gesture detected");
-                            }
-                        }
-                        else if (joint.JointType.Equals(JointType.HandLeft)) {
-                            Console.WriteLine(String.Format("Using left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            strBuilder.Append(String.Format("\nUsing left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            //assume gesture array have only 6 elements
-                            foreach (CoordinateContainer container in gesture1_left)
-                            {
                                 touchedRight |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
+                                if (touchedRight)
+                                {
+                                    m_rightIndex = rightIndex;
+                                    break;
+                                }
+                                rightIndex++;
                             }
                             if (touchedRight)
                             {
-                                Console.WriteLine("Left Hand gesture detected");
-                                strBuilder.Append("\nLeft Hand gesture detected");
+                                if (m_rightIndex != -1)
+                                {
+                                    Console.WriteLine("Right Hand gesture detected " + gesture1_right[m_rightIndex].name);
+                                }
+                                //strBuilder.Append("\nRight Hand gesture detected");
+                            }
+                        }
+                        else if (joint.JointType.Equals(JointType.HandLeft)) {
+                            //Console.WriteLine(String.Format("Using left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            //strBuilder.Append(String.Format("\nUsing left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
+                            //assume gesture array have only 6 elements
+                            int leftIndex = 0;
+                            foreach (CoordinateContainer container in gesture1_left)
+                            {
+                                touchedLeft |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
+                                if (touchedLeft) {
+                                    m_leftIndex = leftIndex;
+                                    break;
+                                }
+                                leftIndex++;
+                            }
+                            if (touchedLeft)
+                            {
+                                if (m_leftIndex != -1)
+                                {
+                                    Console.WriteLine("Left Hand gesture detected " + gesture1_left[m_leftIndex].name);
+                                }
+                                //strBuilder.Append("\nLeft Hand gesture detected");
                             }
                         }
 
                         //if a gesture was discovered, lock for time buffer
-                        if (touchedLeft && touchedRight)
+                        if (m_rightIndex != -1 && m_leftIndex != -1)
                         {
-                            m_timeToEndAt = System.DateTime.Now.AddSeconds(k_secondsToBuffer);
-                            m_useGestureLocked = true;
-                            m_gestureLockMessage = strBuilder.ToString();
+                            if (m_rightIndex == m_leftIndex)
+                            {
+                                m_timeToEndAt = System.DateTime.Now.AddSeconds(k_secondsToBuffer);
+                                m_useGestureLocked = true;
+                                m_gestureLockMessage = strBuilder.ToString();
+                                strBuilder.Append("\n" + gesture1_right[m_leftIndex].name);
+                                Console.WriteLine(gesture1_right[m_leftIndex].name);
+                                m_leftIndex = -1;
+                                m_rightIndex = -1;
+                                touchedRight = false;
+                                touchedLeft = false;
+                            }
                         }
                     }
                 }
@@ -405,6 +444,7 @@ namespace HelloKinect
             rightList.Clear();
             leftList.Clear();
 
+            GOTO_newFrame();
             Console.WriteLine(String.Format("Right Diff: {0}, Left Diff: {1} ", (rightXDiff+rightYDiff)/2.00, (leftXDiff+leftYDiff)/2.00 ));
         }
 
@@ -433,7 +473,7 @@ namespace HelloKinect
          * This function check the coordinate within range
          */
         bool IsWithinRange(double cur, double stored) {
-            double range = 0.02;
+            double range = 0.01;
             if (cur < stored + range && cur > stored - range) {
                 return true;
             }
@@ -483,12 +523,17 @@ namespace HelloKinect
             }
             else if (btn == exportButton)
             {
-                //Here you will be link gesture to syntax
-                SelectionWindow window = new SelectionWindow();
-                window.Show();
-                this.Close();
-                //OnWriteGesture("gesture1");
+                //todo
             }
+        }
+
+        void GOTO_newFrame() {
+            //Here you will be link gesture to syntax
+            SelectionWindow window = new SelectionWindow();
+            Clean();
+            this.Close();
+            window.OpenWindow(gesture1_left, gesture1_right);
+            //OnWriteGesture("gesture1");
         }
 
         //Voice trigger events
