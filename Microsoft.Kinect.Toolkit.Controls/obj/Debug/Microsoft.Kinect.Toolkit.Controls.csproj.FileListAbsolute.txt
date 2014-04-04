@@ -22,3 +22,15 @@ D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Themes\Generic.b
 D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.g.resources
 D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.dll
 D:\NEST\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.pdb
+C:\Users\Nick\Documents\GitHub\HelloKinect\KinectToolbox\.Debug\KinectInteraction180_32.dll
+C:\Users\Nick\Documents\GitHub\HelloKinect\KinectToolbox\.Debug\KinectInteraction180_64.dll
+C:\Users\Nick\Documents\GitHub\HelloKinect\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.dll
+C:\Users\Nick\Documents\GitHub\HelloKinect\KinectToolbox\.Debug\Microsoft.Kinect.Toolkit.Controls.pdb
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.csprojResolveAssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.cache
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls_MarkupCompile.lref
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Themes\Generic.baml
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.g.resources
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.dll
+C:\Users\Nick\Documents\GitHub\HelloKinect\Microsoft.Kinect.Toolkit.Controls\obj\Debug\Microsoft.Kinect.Toolkit.Controls.pdb

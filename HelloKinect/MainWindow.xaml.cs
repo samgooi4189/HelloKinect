@@ -47,9 +47,6 @@ namespace HelloKinect
         List<CoordinateContainer> leftList = new List<CoordinateContainer>();
         List<CoordinateContainer> gesture1_right = new List<CoordinateContainer>();
         List<CoordinateContainer> gesture1_left = new List<CoordinateContainer>();
-        //Voice control
-        //VoiceCommander v_commander;
-        RecordingStatus status = RecordingStatus.STOP;
         //file stream for gesture
         GestureIO fileManager = new GestureIO();
 
@@ -63,17 +60,16 @@ namespace HelloKinect
         private MemoryStream m_ms = new MemoryStream();
 
         //buffer variables (between gestures during coding mode)
-        private System.DateTime m_timeToEndAt;
         private const double k_secondsToBuffer = 5.0;
-        private bool m_useGestureLocked = false;
-        private string m_gestureLockMessage = "";
 
-        private int m_rightIndex = -1;
-        private int m_leftIndex = -1;
+        //PHASE 6
+        private Queue<KinectTileButton> m_tileQueue;
+        private Dictionary<String, String> m_gestureDictionary;
 
         public MainWindow()
         {
             InitializeComponent();
+            m_isInRecordMode = true;
         }
 
         /**
@@ -179,27 +175,24 @@ namespace HelloKinect
                 JitterRadius = 0.05f,
                 MaxDeviationRadius = 0.04f
             });
+
             kinectSensor.SkeletonFrameReady += kinectRuntime_SkeletonFrameReady;
-
             skeletonDisplayManager = new SkeletonDisplayManager(kinectSensor, kinectCanvas);
-            //Add keywords that you wan to detect
-            //v_commander = new VoiceCommander("record", "stop", "fly away", "flapping", "start", "finish", "write");
-
             kinectSensor.Start();
-            //kinectDisplay.DataContext = colorManager;
 
-            //v_commander.OrderDetected += voiceCommander_OrderDetected;
-            //StartVoiceCommander();
+            
+            //load in our gestures from file
+            tile_1_Copy3.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy2.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy1.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy4.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy5.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy6.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            tile_1_Copy7.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
 
-            Dictionary<string, GesturePackage> gestureDic = fileManager.loadGesture();
-            GesturePackage[] values = new GesturePackage[gestureDic.Values.Count];
-            gestureDic.Values.CopyTo(values, 0);
-
-            foreach (GesturePackage package in values)
-            {
-                gesture1_left.Add(package.getLeftCoordinates()[0]);
-                gesture1_right.Add(package.getRightCoordinates()[0]);
-            }
+            m_gestureDictionary = fileManager.LoadGesture();
         }
 
         public void Clean()
@@ -273,146 +266,6 @@ namespace HelloKinect
                 if (skeleton.TrackingState != SkeletonTrackingState.Tracked)
                     continue;
 
-                //timer for recording and wait
-                if (!timerWait.IsRunning && (timerRec.Elapsed.Seconds > 2 || !timerRec.IsRunning))
-                {
-                    timerRec.Stop();
-                    timerRec.Reset();
-                    Console.WriteLine("Please wait while we process the gesture......");
-                    strBuilder.Append("Please wait while we process the gesture......\n");
-                    ProcessGesture();
-                    timerWait.Reset();
-                    timerWait.Start();
-                }
-                if (timerWait.Elapsed.Seconds >= 5 && !timerRec.IsRunning)
-                {
-                    Console.WriteLine("Gesture recorded, NEXT GESTURE!");
-                    strBuilder.Append("Gesture recorded, NEXT GESTURE!\n");
-                    timerWait.Stop();
-                    timerRec.Start();
-                }
-
-                /*contextTracker.Add(skeleton.Position.ToVector3(), skeleton.TrackingId);
-                stabilities.Add(skeleton.TrackingId, contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId) ? "Stable" : "Non stable");
-                if (!contextTracker.IsStableRelativeToCurrentSpeed(skeleton.TrackingId))
-                    continue;
-                */
-                bool touchedLeft = false;
-                bool touchedRight = false;
-                foreach (Joint joint in skeleton.Joints)
-                {
-                    if (status == RecordingStatus.STOP)
-                        break;
-
-                    if (!timerRec.IsRunning) {
-                        continue;
-                    }
-
-                    if (m_useGestureLocked && (System.DateTime.Now >= m_timeToEndAt))
-                    {
-                        strBuilder.Append("Unlocking");
-                        m_useGestureLocked = false;
-                        break;
-                    }
-                    else if (m_useGestureLocked)
-                    {
-                        strBuilder.Append("Locked - " + m_gestureLockMessage);
-                        break;
-                    }
-
-                    if (joint.TrackingState != JointTrackingState.Tracked)
-                        continue;
-                    //strBuilder.Append(joint.JointType.ToString());
-
-                    if (status == RecordingStatus.RECORD)
-                    {
-                        if (joint.JointType.Equals(JointType.HandRight))
-                        {
-                            Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            strBuilder.Append(String.Format("\nRight [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            rightList.Add(new CoordinateContainer(joint.Position.X, joint.Position.Y));
-                        }
-                        else if (joint.JointType.Equals(JointType.HandLeft))
-                        {
-                            Console.WriteLine(String.Format("Left [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            strBuilder.Append(String.Format("\nLeft [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
-                            leftList.Add(new CoordinateContainer(joint.Position.X, joint.Position.Y));
-                        }
-                    }
-                    else if (status == RecordingStatus.USE) {
-                        double cur_pos = joint.Position.Y;
-                        if (joint.JointType.Equals(JointType.HandRight)) {
-                            //Console.WriteLine(String.Format("Using right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            //strBuilder.Append(String.Format("\nUsing right: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            //assume gesture array have only 6 elements
-                            int rightIndex = 0;
-                            foreach (CoordinateContainer container in gesture1_right)
-                            {
-                                touchedRight |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
-                                if (touchedRight)
-                                {
-                                    m_rightIndex = rightIndex;
-                                    break;
-                                }
-                                rightIndex++;
-                            }
-                            if (touchedRight)
-                            {
-                                if (m_rightIndex != -1)
-                                {
-                                    Console.WriteLine("Right Hand gesture detected " + gesture1_right[m_rightIndex].name);
-                                }
-                                //strBuilder.Append("\nRight Hand gesture detected");
-                            }
-                        }
-                        else if (joint.JointType.Equals(JointType.HandLeft)) {
-                            //Console.WriteLine(String.Format("Using left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            //strBuilder.Append(String.Format("\nUsing left: [{0}, {1}]", joint.Position.X, joint.Position.Y));
-                            //assume gesture array have only 6 elements
-                            int leftIndex = 0;
-                            foreach (CoordinateContainer container in gesture1_left)
-                            {
-                                touchedLeft |= IsWithinRange(joint.Position.Y, container.getY()) || IsWithinRange(joint.Position.X, container.getX());
-                                if (touchedLeft) {
-                                    m_leftIndex = leftIndex;
-                                    break;
-                                }
-                                leftIndex++;
-                            }
-                            if (touchedLeft)
-                            {
-                                if (m_leftIndex != -1)
-                                {
-                                    Console.WriteLine("Left Hand gesture detected " + gesture1_left[m_leftIndex].name);
-                                }
-                                //strBuilder.Append("\nLeft Hand gesture detected");
-                            }
-                        }
-
-                        //if a gesture was discovered, lock for time buffer
-                        if (m_rightIndex != -1 && m_leftIndex != -1)
-                        {
-                            if (m_rightIndex == m_leftIndex)
-                            {
-                                m_timeToEndAt = System.DateTime.Now.AddSeconds(k_secondsToBuffer);
-                                m_useGestureLocked = true;
-                                m_gestureLockMessage = strBuilder.ToString();
-                                strBuilder.Append("\n" + gesture1_right[m_leftIndex].name);
-                                Console.WriteLine(gesture1_right[m_leftIndex].name);
-                                m_codeString = m_codeString + gesture1_right[m_leftIndex].name + " ";
-                                codeView.Content = m_codeString;
-                                m_leftIndex = -1;
-                                m_rightIndex = -1;
-                                touchedRight = false;
-                                touchedLeft = false;
-                            }
-                        }
-                    }
-                }
-
-                //MessageBox.Show(strBuilder.ToString());
-
-                //this is the place to draw sitting position or not
                 skeletonDisplayManager.Draw(frame.Skeletons, false);
                 Output.Text = strBuilder.ToString();
                 //we only care about 1 skeleton
@@ -422,32 +275,7 @@ namespace HelloKinect
 
         //Get the treshold of the movement
         void ProcessGesture() {
-            if (rightList.Count == 0 || leftList.Count == 0) {
-                return;
-            }
-            //insert into result array
-            /*double rightSUM =0, leftSUM=0;
-            foreach (double r_val in rightList)
-                rightSUM += r_val;
-            rightSUM /= rightList.Count;
-            foreach (double l_val in leftList)
-                leftSUM += l_val;
-            leftSUM /= leftList.Count;
-            gesture1_right.AddLast(rightSUM);
-            gesture1_left.AddLast(leftSUM);*/
-            gesture1_right.Add(rightList.Last());
-            gesture1_left.Add(leftList.Last());
 
-            //only consider last coordinate
-            double rightXDiff = Math.Abs(rightList.Last().getX() - rightList.Last().getX());
-            double rightYDiff = Math.Abs(rightList.Last().getY() - rightList.Last().getY());
-            double leftXDiff = Math.Abs(leftList.Last().getX() - leftList.Last().getX());
-            double leftYDiff = Math.Abs(leftList.Last().getY() - leftList.Last().getY());
-            rightList.Clear();
-            leftList.Clear();
-
-            GOTO_newFrame();
-            Console.WriteLine(String.Format("Right Diff: {0}, Left Diff: {1} ", (rightXDiff+rightYDiff)/2.00, (leftXDiff+leftYDiff)/2.00 ));
         }
 
         void replay_DepthImageFrameReady(object sender, ReplayDepthImageFrameReadyEventArgs e)
@@ -541,34 +369,28 @@ namespace HelloKinect
             SelectionWindow window = new SelectionWindow();
             Clean();
             this.Close();
-            window.OpenWindow(gesture1_left, gesture1_right);
+            window.OpenWindow(m_tileQueue);
             //OnWriteGesture("gesture1");
         }
 
         //Voice trigger events
         void OnStartRecord() {
-            status = RecordingStatus.RECORD;
+            //status = RecordingStatus.RECORD;
             gesture1_left.Clear();
             gesture1_right.Clear();
 
         }
 
         void OnStopRecord() {
-            status = RecordingStatus.STOP;
+            //status = RecordingStatus.STOP;
         }
 
         void OnTestGesture() {
-            status = RecordingStatus.USE;
-        }
-
-        void OnWriteGesture(String gesture_syntax) {
-            if (gesture1_right.Count == 0 || gesture1_left.Count == 0)
-                return;
-            fileManager.saveGesture(gesture_syntax, gesture1_right, gesture1_left);
+            //status = RecordingStatus.USE;
         }
 
         public void OpenMain(GesturePackage package) {
-            fileManager.saveGesture(package.getName(), package.getRightCoordinates(), package.getLeftCoordinates());
+            fileManager.SaveGesture(package.getName(), package.GetTileKeys());
             this.Show();
         }
 
@@ -660,5 +482,59 @@ namespace HelloKinect
             consoleView.Content = m_consoleString;
         }
 
+        private void OnTileHovered(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            KinectTileButton btn = (KinectTileButton)sender;
+            Console.WriteLine(btn.Name.ToString());
+
+            if (m_tileQueue == null)
+            {
+                m_tileQueue = new Queue<KinectTileButton>();
+            }
+
+            if (!m_tileQueue.Contains(btn))
+            {
+                m_tileQueue.Enqueue(btn);
+                btn.Background = new SolidColorBrush(Color.FromArgb(255, 0, 255, 0));
+            }
+
+            if (m_tileQueue.Count > 3)
+            {
+                KinectTileButton popped = m_tileQueue.Dequeue();
+                popped.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            }
+
+            int scalar = 1;
+            foreach (KinectTileButton button in m_tileQueue)
+            {
+                button.Background = new SolidColorBrush(Color.FromArgb(255, 0, (byte)(250 * scalar / 6) , 0));
+                scalar++;
+            }
+        }
+
+        private void OnTileClicked(object sender, RoutedEventArgs e)
+        {
+            KinectTileButton btn = (KinectTileButton)sender;
+            if (m_isInRecordMode)
+            {
+                GOTO_newFrame();
+                //m_isInRecordMode = false;
+            }
+            else
+            {
+                Queue<KinectTileButton> toCheck = new Queue<KinectTileButton>(m_tileQueue);
+                String potentialKey = "";
+                while (toCheck.Count != 0)
+                {
+                    potentialKey += toCheck.Dequeue().Name;
+                }
+
+                if (m_gestureDictionary.ContainsKey(potentialKey))
+                {
+                    m_codeString += m_gestureDictionary[potentialKey];
+                    codeView.Content = m_codeString;
+                }
+            }
+        }
     }
 }

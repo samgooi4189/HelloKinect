@@ -41,6 +41,7 @@ namespace HelloKinect
         String gesture_name;
         List<CoordinateContainer> left_coordinates_list = new List<CoordinateContainer>();
         List<CoordinateContainer> right_coordinates_list = new List<CoordinateContainer>();
+        List<String> m_tileKeys = new List<String>();
 
         public GesturePackage(String name) {
             gesture_name = name;
@@ -70,6 +71,16 @@ namespace HelloKinect
 
         public List<CoordinateContainer> getRightCoordinates() {
             return right_coordinates_list;
+        }
+
+        public void SetTileKeys(List<String> keys)
+        {
+            m_tileKeys = keys;
+        }
+
+        public List<String> GetTileKeys()
+        {
+            return m_tileKeys;
         }
 
     }

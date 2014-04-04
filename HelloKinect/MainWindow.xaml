@@ -25,6 +25,16 @@
                         <k:KinectTileButton x:Name="runButton"  Content="Run" HorizontalAlignment="Right" Visibility="Hidden" Height="Auto" Click="OnRunPython" Margin="0,363,473,0" Width="167" Foreground="White"/>
                         <k:KinectScrollViewer x:Name="codeView" Content="[CODE DISPLAYED HERE]" Margin="512,128,-23,4" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" ContentMargin="0" Foreground="White" FontWeight="Bold" />
                         <k:KinectScrollViewer x:Name="consoleView" Content="[OUTPUT DISPLAYED HERE]" Margin="208,368,182,5" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" ContentMargin="0" FontWeight="Bold" Foreground="White" />
+                        <k:KinectTileButton x:Name="tile_1_Copy"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto"  Margin="0,132,413,255" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy1"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto"  Margin="0,132,307,255" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto"  Margin="0,34,413,354" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy2"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,34,307,354" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy3"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,230,413,158" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy4"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,230,307,158" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy5"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,34,200,354" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy6"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,132,200,255" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+                        <k:KinectTileButton x:Name="tile_1_Copy7"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto" Margin="0,230,200,158" Width="101" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
+
                     </Grid>
                 </k:KinectRegion>
             </Grid>

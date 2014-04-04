@@ -46,6 +46,9 @@ namespace HelloKinect
 
         public string selectedToken = "";
 
+        //PHASE SIX
+        private Queue<KinectTileButton> m_tileQueue;
+
         public SelectionWindow()
         {
             InitializeComponent();
@@ -168,7 +171,6 @@ namespace HelloKinect
             //StartVoiceCommander();
 
             fileManager = new GestureIO();
-            fileManager.loadGesture();
         }
 
         public void Clean() {
@@ -407,6 +409,13 @@ namespace HelloKinect
             GesturePackage pk = new GesturePackage(selectedToken);
             pk.setLeftCoordinates(left_coordinates);
             pk.setRightCoordinates(right_coordinates);
+
+            //construct tile keys
+            List<String> tileKeys = new List<String>();
+            foreach(KinectTileButton button in m_tileQueue) {
+                tileKeys.Add(button.Name);
+            }
+            pk.SetTileKeys(tileKeys);
             Clean();
             this.Close();
             main.OpenMain(pk);
@@ -415,6 +424,12 @@ namespace HelloKinect
         public void OpenWindow(List<CoordinateContainer> corL, List<CoordinateContainer> corR){
             left_coordinates = corL;
             right_coordinates = corR;
+            this.Show();
+        }
+
+        public void OpenWindow(Queue<KinectTileButton> selectedTiles)
+        {
+            m_tileQueue = selectedTiles;
             this.Show();
         }
 

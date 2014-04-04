@@ -28,7 +28,7 @@ namespace Microsoft.Kinect.Toolkit.Controls
 
         private static readonly bool IsInDesignMode = DesignerProperties.GetIsInDesignMode(new DependencyObject());
 
-        private HandPointer capturedHandPointer;
+        public HandPointer capturedHandPointer;
 
         protected KinectButtonBase()
         {
@@ -150,6 +150,7 @@ namespace Microsoft.Kinect.Toolkit.Controls
             if (KinectRegion.GetIsPrimaryHandPointerOver(this))
             {
                 VisualStateManager.GoToState(this, "MouseOver", true);
+                this.CaptureMouse();
             }
         }
 
