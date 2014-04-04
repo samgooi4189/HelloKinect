@@ -33,12 +33,13 @@ namespace HelloKinect
                     String input = "";
                     String name = "";
                     List<String> keys = new List<String>();
+                    bool firstLine = true;
                     while ((input = reader.ReadLine()) != null)
                     {
-                        if (input == "" || input == "/n")
+                        if (firstLine || input == "" || input == "/n")
                         {
                             //save out any existing values, we have hit a new series
-                            if (keys.Count != 0)
+                            if (keys.Count != 0 && !firstLine)
                             {
                                 String pathKey = "";
                                 foreach (String str in keys)
@@ -48,9 +49,14 @@ namespace HelloKinect
                                 gestureDic.Add(pathKey, name);
                             }
 
-                            input = reader.ReadLine();
-                            if (input == null) break;
 
+                            if (!firstLine)
+                            {
+                                input = reader.ReadLine();
+                                if (input == null) break;
+                            }
+
+                            firstLine = false;
                             name = input;
                             keys = new List<String>();
                         }

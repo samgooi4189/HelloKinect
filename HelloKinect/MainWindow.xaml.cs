@@ -182,17 +182,23 @@ namespace HelloKinect
 
             
             //load in our gestures from file
-            tile_1_Copy3.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy2.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy1.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy4.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy5.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy6.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
-            tile_1_Copy7.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            one.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            two.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            three.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            four.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            five.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            six.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            seven.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            eight.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
+            nine.Background = new SolidColorBrush(Color.FromArgb(100, 82, 29, 143));
 
             m_gestureDictionary = fileManager.LoadGesture();
+            String[] debug = new String[m_gestureDictionary.Keys.Count];
+            m_gestureDictionary.Keys.CopyTo(debug, 0);
+            foreach (String str in debug)
+            {
+                Console.WriteLine("Key: " + str);
+            }
         }
 
         public void Clean()
@@ -313,41 +319,25 @@ namespace HelloKinect
         void ButtonOnClick(Object sender, RoutedEventArgs e) {
             KinectTileButton btn = (KinectTileButton)sender;
             
-            if (btn == recordButton) {
-                OnStartRecord();
-            }
-            else if (btn == useButton)
-            {
-                OnTestGesture();
-            }
-            else if (btn == stopButton)
-            {
-                OnStopRecord();
-            }
-            else if (btn == modeButton)
+            if (btn == modeButton)
             {
                 if (m_isInRecordMode)
                 {
                     m_isInRecordMode = false;
-                    recordButton.Visibility = System.Windows.Visibility.Hidden;
-                    useButton.Visibility = System.Windows.Visibility.Hidden;
-                    stopButton.Visibility = System.Windows.Visibility.Hidden;
-                    exportButton.Visibility = System.Windows.Visibility.Hidden;
+                    
 
                     OnTestGesture();
 
                     codeView.Visibility = System.Windows.Visibility.Visible;
                     consoleView.Visibility = System.Windows.Visibility.Visible;
                     runButton.Visibility = System.Windows.Visibility.Visible;
+                    Colon.Visibility = System.Windows.Visibility.Visible;
+                    Tab.Visibility = System.Windows.Visibility.Visible;
+                    Enter.Visibility = System.Windows.Visibility.Visible;
                 }
                 else
                 {
-                    m_isInRecordMode = true;
-                    
-                    recordButton.Visibility = System.Windows.Visibility.Visible;
-                    useButton.Visibility = System.Windows.Visibility.Visible;
-                    stopButton.Visibility = System.Windows.Visibility.Visible;
-                    exportButton.Visibility = System.Windows.Visibility.Visible;
+                    m_isInRecordMode = true;        
 
                     OnStopRecord();
                     m_codeString = "";
@@ -356,11 +346,10 @@ namespace HelloKinect
                     codeView.Visibility = System.Windows.Visibility.Hidden;
                     consoleView.Visibility = System.Windows.Visibility.Hidden;
                     runButton.Visibility = System.Windows.Visibility.Hidden;
+                    Colon.Visibility = System.Windows.Visibility.Hidden;
+                    Tab.Visibility = System.Windows.Visibility.Hidden;
+                    Enter.Visibility = System.Windows.Visibility.Hidden;
                 }
-            }
-            else if (btn == exportButton)
-            {
-                //todo
             }
         }
 
@@ -485,7 +474,6 @@ namespace HelloKinect
         private void OnTileHovered(object sender, DependencyPropertyChangedEventArgs e)
         {
             KinectTileButton btn = (KinectTileButton)sender;
-            Console.WriteLine(btn.Name.ToString());
 
             if (m_tileQueue == null)
             {
@@ -529,11 +517,32 @@ namespace HelloKinect
                     potentialKey += toCheck.Dequeue().Name;
                 }
 
+                Console.WriteLine("Contains " + potentialKey + ": " + m_gestureDictionary.ContainsKey(potentialKey));
                 if (m_gestureDictionary.ContainsKey(potentialKey))
                 {
-                    m_codeString += m_gestureDictionary[potentialKey];
+                    m_codeString += m_gestureDictionary[potentialKey] + " ";
                     codeView.Content = m_codeString;
                 }
+            }
+        }
+
+        private void OnSpecialInput(object sender, RoutedEventArgs e)
+        {
+            KinectTileButton btn = (KinectTileButton)sender;
+            if (btn == Colon)
+            {
+                m_codeString += ":";
+                codeView.Content = m_codeString;
+            }
+            else if (btn == Tab)
+            {
+                m_codeString += "\t";
+                codeView.Content = m_codeString;
+            }
+            else if (btn == Enter)
+            {
+                m_codeString += "\n";
+                codeView.Content = m_codeString;
             }
         }
     }
