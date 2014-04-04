@@ -45,6 +45,7 @@ namespace HelloKinect
         List<string> variableList = new List<string>();
 
         public string selectedToken = "";
+        
 
         //PHASE SIX
         private Queue<KinectTileButton> m_tileQueue;
@@ -445,8 +446,8 @@ namespace HelloKinect
             operatorList.Add("+");
             operatorList.Add("-");
 
-            functionList.Add("WRITEDONTNEEDS?");
             functionList.Add("print");
+            functionList.Add("fibPrefab");
 
             variableList.Add("functionDecl1");
             variableList.Add("functionDecl2");
@@ -457,6 +458,7 @@ namespace HelloKinect
             variableList.Add("variable4");
             variableList.Add("variable5");
             variableList.Add("1");
+            variableList.Add("2");
         }
 
     }

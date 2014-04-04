@@ -65,6 +65,8 @@ namespace HelloKinect
         //PHASE 6
         private Queue<KinectTileButton> m_tileQueue;
         private Dictionary<String, String> m_gestureDictionary;
+        public string k_fibonacciString = "def fib(n):\n" + "\tif n == 0:\n" + "\t\treturn 0\n" + "\telif n == 1:\n"
+            + "\t\treturn 1\n" + "\telse:\n" + "\t\treturn fib(n-1) + fib(n-2)\n" + "print fib(27)";
 
         public MainWindow()
         {
@@ -520,7 +522,12 @@ namespace HelloKinect
                 Console.WriteLine("Contains " + potentialKey + ": " + m_gestureDictionary.ContainsKey(potentialKey));
                 if (m_gestureDictionary.ContainsKey(potentialKey))
                 {
-                    m_codeString += m_gestureDictionary[potentialKey] + " ";
+                    String hackCity = m_gestureDictionary[potentialKey];
+                    if (hackCity == "fibPrefab")
+                    {
+                        hackCity = k_fibonacciString;
+                    }
+                    m_codeString += hackCity + " ";
                     codeView.Content = m_codeString;
                 }
             }
