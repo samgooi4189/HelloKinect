@@ -141,11 +141,11 @@ namespace HelloKinect
             if (kinectSensor == null)
                 return;
 
-            kinectSensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
-            kinectSensor.ColorFrameReady += kinectRuntime_ColorFrameReady;
+            //kinectSensor.ColorStream.Enable(ColorImageFormat.RgbResolution640x480Fps30);
+            //kinectSensor.ColorFrameReady += kinectRuntime_ColorFrameReady;
 
-            kinectSensor.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
-            kinectSensor.DepthFrameReady += kinectSensor_DepthFrameReady;
+            //kinectSensor.DepthStream.Enable(DepthImageFormat.Resolution320x240Fps30);
+            //kinectSensor.DepthFrameReady += kinectSensor_DepthFrameReady;
 
             kinectSensor.SkeletonStream.Enable(new TransformSmoothParameters
             {
@@ -175,8 +175,8 @@ namespace HelloKinect
             //v_commander.OrderDetected -= voiceCommander_OrderDetected;
             if (kinectSensor != null)
             {
-                kinectSensor.DepthFrameReady -= kinectSensor_DepthFrameReady;
-                kinectSensor.ColorFrameReady -= kinectRuntime_ColorFrameReady;
+                //kinectSensor.DepthFrameReady -= kinectSensor_DepthFrameReady;
+                //kinectSensor.ColorFrameReady -= kinectRuntime_ColorFrameReady;
                 kinectSensor.SkeletonFrameReady -= kinectRuntime_SkeletonFrameReady;
                 kinectSensor.Stop();
                 kinectSensor = null;
@@ -394,8 +394,16 @@ namespace HelloKinect
                 functionDefs.Children.Clear();
                 keywordDefs.Children.Clear();
             }
+            else if (btn.Label.ToString() == "Cancel")
+            {
+                MainWindow main = new MainWindow();
+                Clean();
+                this.Close();
+                main.Show();
+            }
 
         }
+        
 
         void OnScrollViewButtonClick(Object sender, RoutedEventArgs e)
         {

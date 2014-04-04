@@ -278,16 +278,16 @@ namespace HelloKinect
                 {
                     timerRec.Stop();
                     timerRec.Reset();
-                    Console.WriteLine("Please wait while we process the gesture......");
-                    strBuilder.Append("Please wait while we process the gesture......\n");
+                    //Console.WriteLine("Please wait while we process the gesture......");
+                    //strBuilder.Append("Please wait while we process the gesture......\n");
                     ProcessGesture();
                     timerWait.Reset();
                     timerWait.Start();
                 }
                 if (timerWait.Elapsed.Seconds >= 5 && !timerRec.IsRunning)
                 {
-                    Console.WriteLine("Gesture recorded, NEXT GESTURE!");
-                    strBuilder.Append("Gesture recorded, NEXT GESTURE!\n");
+                    //Console.WriteLine("Gesture recorded, NEXT GESTURE!");
+                    //strBuilder.Append("Gesture recorded, NEXT GESTURE!\n");
                     timerWait.Stop();
                     timerRec.Start();
                 }
@@ -326,6 +326,24 @@ namespace HelloKinect
 
                     if (status == RecordingStatus.RECORD)
                     {
+                        if (exportButton.Label == "Export")
+                        {
+                            exportButton.Label = "Ready?";
+                            exportButton.Background = Brushes.DarkRed;
+                            exportButton.UpdateLayout();
+                            continue;
+                        }
+                        else if (exportButton.Label.ToString() == "Ready?"){
+                            DateTime now = DateTime.Now;
+                            while (now.AddSeconds(3) > DateTime.Now)
+                            {
+                                System.Threading.Thread.Yield();
+                            }
+                            exportButton.Label = "Start";
+                            exportButton.Background = Brushes.DarkGreen;
+                            exportButton.UpdateLayout();
+                        }
+
                         if (joint.JointType.Equals(JointType.HandRight))
                         {
                             Console.WriteLine(String.Format("Right [{0}, {1}, {2}]", joint.Position.X, joint.Position.Y, joint.Position.Z));
@@ -511,6 +529,7 @@ namespace HelloKinect
                     codeView.Visibility = System.Windows.Visibility.Visible;
                     consoleView.Visibility = System.Windows.Visibility.Visible;
                     runButton.Visibility = System.Windows.Visibility.Visible;
+                    UndoButton.Visibility = System.Windows.Visibility.Visible;
                 }
                 else
                 {
@@ -528,6 +547,7 @@ namespace HelloKinect
                     codeView.Visibility = System.Windows.Visibility.Hidden;
                     consoleView.Visibility = System.Windows.Visibility.Hidden;
                     runButton.Visibility = System.Windows.Visibility.Hidden;
+                    UndoButton.Visibility = System.Windows.Visibility.Hidden;
                 }
             }
             else if (btn == exportButton)
@@ -641,6 +661,20 @@ namespace HelloKinect
             string str = ReadFromStream(m_ms);
             WriteToIDE(str);
             m_ms.Close(); 
+        }
+
+        private void OnDeleteSyntax(object sender, RoutedEventArgs e)
+        {
+            char[] str_buffer = m_codeString.ToCharArray(0, m_codeString.Length);
+            for (int i = str_buffer.Length - 1; i > -1; i--) {
+                if (str_buffer[i] == ' ') {
+                    m_codeString = m_codeString.Substring(0, i);
+                }
+                else if (i == 0) {
+                    m_codeString = "";
+                }
+            }
+            codeView.Content = m_codeString;
         }
 
         private string ReadFromStream(MemoryStream ms)
