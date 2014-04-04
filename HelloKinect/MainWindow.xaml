@@ -19,7 +19,7 @@
                     <Grid>
                         <k:KinectTileButton x:Name="modeButton" Content="Mode" HorizontalAlignment="Right" Height="Auto" Click="ButtonOnClick" Margin="0,10,0,357" Foreground="White" Width="136"/>
                         <k:KinectTileButton x:Name="runButton"  Content="Run" HorizontalAlignment="Right" Visibility="Hidden" Height="Auto" Click="OnRunPython" Margin="0,369,498,4" Width="136" Foreground="White"/>
-                        <k:KinectScrollViewer x:Name="codeView" Content="[CODE DISPLAYED HERE]" Margin="540,128,-23,4" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" ContentMargin="0" Foreground="White" FontWeight="Bold" />
+                        <k:KinectScrollViewer x:Name="codeView" Content="[CODE DISPLAYED HERE]" Margin="540,128,-23,4" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" ContentMargin="0" Foreground="White" FontWeight="Bold" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
                         <k:KinectScrollViewer x:Name="consoleView" Content="[OUTPUT DISPLAYED HERE]" Margin="199,381,141,10" Visibility="Hidden" Background="#FFAA9E9E" BorderBrush="#FF6130E4" ContentMargin="0" FontWeight="Bold" Foreground="White" />
                         <k:KinectTileButton x:Name="four"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto"  Margin="0,172,373,209" Width="104" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>
                         <k:KinectTileButton x:Name="five"  Content="" HorizontalAlignment="Right" Visibility="Visible" Height="Auto"  Margin="0,172,265,209" Width="103" Foreground="White" IsMouseDirectlyOverChanged="OnTileHovered" Click="OnTileClicked"/>

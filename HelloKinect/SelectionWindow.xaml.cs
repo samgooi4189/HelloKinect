@@ -440,23 +440,35 @@ namespace HelloKinect
             keywordList.Add("elif");
             keywordList.Add("else");
             keywordList.Add("return");
+            keywordList.Add("while");
+            keywordList.Add("for");
+            keywordList.Add("foreach");
+            keywordList.Add("in");
 
             operatorList.Add("==");
             operatorList.Add("=");
             operatorList.Add("+");
             operatorList.Add("-");
+            operatorList.Add(">");
+            operatorList.Add("<");
+            operatorList.Add(">=");
+            operatorList.Add("<=");
 
             functionList.Add("print");
             functionList.Add("fibPrefab");
+            functionList.Add("len");
+            functionList.Add("abs");
+            functionList.Add("slice");
+            functionList.Add("open");
 
-            variableList.Add("functionDecl1");
-            variableList.Add("functionDecl2");
-            variableList.Add("functionDecl3");
-            variableList.Add("variable1");
-            variableList.Add("variable2");
-            variableList.Add("variable3");
-            variableList.Add("variable4");
-            variableList.Add("variable5");
+            variableList.Add("func1");
+            variableList.Add("func2");
+            variableList.Add("func3");
+            variableList.Add("var1");
+            variableList.Add("var2");
+            variableList.Add("var3");
+            variableList.Add("var4");
+            variableList.Add("var5");
             variableList.Add("1");
             variableList.Add("2");
         }
