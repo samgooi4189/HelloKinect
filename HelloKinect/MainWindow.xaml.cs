@@ -326,23 +326,6 @@ namespace HelloKinect
 
                     if (status == RecordingStatus.RECORD)
                     {
-                        if (exportButton.Label == "Export")
-                        {
-                            exportButton.Label = "Ready?";
-                            exportButton.Background = Brushes.DarkRed;
-                            exportButton.UpdateLayout();
-                            continue;
-                        }
-                        else if (exportButton.Label.ToString() == "Ready?"){
-                            DateTime now = DateTime.Now;
-                            while (now.AddSeconds(3) > DateTime.Now)
-                            {
-                                System.Threading.Thread.Yield();
-                            }
-                            exportButton.Label = "Start";
-                            exportButton.Background = Brushes.DarkGreen;
-                            exportButton.UpdateLayout();
-                        }
 
                         if (joint.JointType.Equals(JointType.HandRight))
                         {
